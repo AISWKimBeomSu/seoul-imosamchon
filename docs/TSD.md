@@ -941,7 +941,7 @@ import { track } from '@/lib/analytics';
 
 | 규칙 | 내용 |
 |---|---|
-| 동시에 하나만 강조 | A=강조 채움(라임그린 #D3E298·어두운 글자), B=보조 아웃라인 — 나란히 같은 크기·색 금지 |
+| 동시에 하나만 강조 | A=강조 채움(딥그린 #4E6A18·흰 글자·pill), B=보조 아웃라인 — 나란히 같은 크기·색 금지 |
 | 번호+아이콘 순서화 | B 경로는 ①②③④ 스텝 |
 | 결과 예고 | "새 창이 열립니다", "메일 앱이 열립니다" |
 | 완료 확인 안내 | "접수되면 하루 이틀 안에 전화/문자로 연락드려요" |
@@ -1039,8 +1039,8 @@ export function KakaoEscape({ url }: { url: string }) {
 ```css
 :root {
   /* ── Type ── */
-  --font-sans: "Pretendard", -apple-system, "Apple SD Gothic Neo", "맑은 고딕", sans-serif;
-  --font-brand: "Noto Sans KR", "Pretendard", "Apple SD Gothic Neo", "맑은 고딕", sans-serif; /* 브랜드 워드마크 전용(700) */
+  --font-sans: "Noto Sans KR", "Pretendard", -apple-system, "Apple SD Gothic Neo", "맑은 고딕", sans-serif; /* 전 사이트 단일 통일 (2026-07-22) */
+  --font-brand: var(--font-sans); /* 브랜드 워드마크도 동일 폰트, weight 700 */
 
   /* 글자 크게: 단일 메커니즘 = --fs-scale 배율 (root font-size 변경 안 함) */
   --fs-scale: 1;            /* 기본 */
@@ -1063,10 +1063,10 @@ export function KakaoEscape({ url }: { url: string }) {
   --c-line: #E7E7D6;         /* 한지 라인 */
   --c-text: #23201C;         /* 아궁이 차콜 (본문) */
   --c-text-sub: #6E665C;     /* 재빛 그레이 */
-  --c-brand: #D3E298;        /* ★대표 라임그린 — 버튼·배지·태그 '배경'만(어두운 글자 필수, 흰글자·텍스트색 금지) */
+  --c-brand: #D3E298;        /* ★대표 라임그린 — 배지·태그·하이라이트 '배경'만(어두운 글자 필수, 흰글자·텍스트색 금지) */
   --c-brand-ink: #24310D;    /* 라임 배경 위 글자(딥올리브, ≈11.7:1) */
   --c-brand-mid: #B4CE6E;    /* 라임 보더/hover 경계 */
-  --c-primary: #4E6A18;      /* 진한 라임(딥그린) — 링크·라벨·강조 텍스트·흰글자 바·포커스(≈6.2:1) */
+  --c-primary: #4E6A18;      /* 진한 라임(딥그린) — 솔리드 CTA 버튼(흰 글자·pill)·링크·라벨·흰글자 바·포커스(≈6.2:1) */
   --c-primary-deep: #3C5312; /* hover */
   --c-primary-soft: #EEF4D8; /* 라임 소프트 (태그/hover 배경) */
   --c-secondary: #C79438;    /* 들기름 골드 (안내 배지 배경 전용, 텍스트색 금지) */
@@ -1129,7 +1129,7 @@ body {
 | 조합 | 용도 | 대비 | 판정 |
 |---|---|---|---|
 | `#23201C` 텍스트 / `#FFFFFF` 배경 | 본문 | **≈16:1** | AAA ✅ |
-| `#24310D` 딥올리브 / `#D3E298` 라임 | **대표 버튼·배지 글자** | **≈11.7:1** | AAA ✅ |
+| `#24310D` 딥올리브 / `#D3E298` 라임 | **배지·태그 글자**(라임 배경) | **≈11.7:1** | AAA ✅ |
 | 흰색 `#FFFFFF` / `#D3E298` 라임 | ❌ **CTA 흰 글자** | **≈1.4:1** | **불통과(금지)** |
 | `#D3E298` 라임 / `#FFFFFF` | ❌ **링크·텍스트색** | **≈1.4:1** | **불통과(금지)** |
 | `#4E6A18` 딥그린 / `#FFFFFF` | 링크·라벨·강조 텍스트 | **≈6.2:1** | AA ✅ |
@@ -1192,12 +1192,12 @@ export function FontScaleToggle() {
 
 | 용도 | 폰트 | 근거 |
 |---|---|---|
-| **본문·UI 전체** | **Pretendard**(KR 서브셋, `next/font/local` self-host) | 무료·오픈, 저시력 가독 우수, CSP 안전 |
-| **브랜드 워드마크 "서울이모삼촌"**(헤더·푸터) | **Noto Sans KR 700**(워드마크 글리프만 서브셋 self-host, `--font-brand`) | 2026-07-22 사용자 선택(폰트 A). 로고 옆 브랜드명 전용, 8~15KB 초경량 서브셋 |
-| 폴백 | Apple SD Gothic Neo / 맑은 고딕 | 웹폰트 실패 대비 |
+| **전체 UI(본문·헤딩·버튼·브랜드명)** | **Noto Sans KR**(가변 100–900, `next/font/google` self-host 또는 서브셋) | **2026-07-22 사용자 결정: 전 사이트 단일 폰트 통일.** 저시력 가독 우수, 굵기 축 완비, CSP 안전 |
+| 브랜드 워드마크 "서울이모삼촌" | 동일 Noto Sans KR **700** | 로고 옆 브랜드명, 굵기만 700 |
+| 폴백 | Pretendard / Apple SD Gothic Neo / 맑은 고딕 | 웹폰트 실패 대비 |
 | 금지 | Light/Thin(≤300), 손글씨·장식/명조체 본문, 시스템 Batang 폴백(얇게 렌더) | 저대비+얇은 획 = 판독 불가 |
 
-> 시안에서는 Noto Sans KR을 워드마크 글자만 서브셋(woff, ~8KB)해 `@font-face` data URI로 임베드했다. 실제 빌드에선 `next/font/local`로 self-host + 필요한 글리프만 서브셋한다.
+> 시안에서는 Noto Sans KR 가변 폰트를 **페이지에 쓰인 전체 글리프(≈300 한글 syllable)로 서브셋**(woff ~103KB, wght 축 유지)해 `@font-face` data URI로 임베드했다. 실제 빌드에선 `next/font/google`(Noto Sans KR) self-host + 자동 서브셋으로 처리한다.
 
 - `font-display: swap` + 폴백 메트릭 매칭으로 CLS 최소.
 - **Pretendard 단일 패밀리 운영**(명조 병용은 성능·유지보수상 v1 미채택, §20-12).
@@ -1762,7 +1762,7 @@ export async function GET(req: NextRequest) {
 | ✅ 9 | **접수 메일함** — 확정: songchaewoo0@gmail.com(송채우) | 개인정보 안전성 | 개인 Gmail — env 주입·노출 최소화, 향후 전용계정 전환 여지 |
 | ⚠️ 10 | **법적 페이지** — 처리방침·약관·위탁 고지 범위 | 컴플라이언스 | `/privacy`·`/terms` v1 포함 |
 | ⚠️ 11 | **구글폼 URL·전화번호** | 경로 A·안내 | 환경변수 주입, 폼은 별도 확정 |
-| ✅ 12 | **타이포 확정** — 본문·UI = Pretendard, 브랜드 워드마크 = Noto Sans KR 700 | 폰트·통일성 | 폰트 A 선택(2026-07-22). 명조·대형 헤드라인 배제 |
+| ✅ 12 | **타이포 확정** — 전체 UI **Noto Sans KR 단일 통일**(가변 100–900), 브랜드명 700 | 폰트·통일성 | 2026-07-22 사용자 결정(전 사이트 통일). 명조·대형 헤드라인 배제 |
 | ⚠️ 13 | **개발 리소스** — 담당자·예산·가용 공수 | **전체 일정 최상위 리스크** | **미확정 — 착수 전 필수 확정**(내부 개발자/외주/375만원 배분) |
 | ⚠️ 14 | **분석 도구** — Vercel Analytics vs Plausible | KPI·개인정보 | Vercel Web Analytics(쿠키리스) |
 | ✅ 15 | **브랜드 로고 이미지** — 확보(1024² PNG, 투명배경) | 헤더·히어로·OG·favicon | 원본 `08_개발/assets/logo.png`. 빌드 시 `public/`로 이동 + WebP/반응형 파생·favicon·OG 자동 생성(헤더=엠블럼 크롭, 히어로=전체 로고) |
