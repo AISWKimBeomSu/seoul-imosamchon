@@ -9,8 +9,8 @@ export default function SiteHeader() {
           <Image
             src="/brand/logo.png"
             alt=""
-            width={46}
-            height={46}
+            width={69}
+            height={69}
             aria-hidden="true"
           />
           <span>
@@ -20,6 +20,7 @@ export default function SiteHeader() {
           </span>
         </Link>
         <nav className="nav-links" aria-label="주요 메뉴">
+          <Link href="/">홈</Link>
           <Link href="/about">브랜드소개</Link>
           <Link href="/notice">공지사항</Link>
           <Link href="/faq">FAQ</Link>

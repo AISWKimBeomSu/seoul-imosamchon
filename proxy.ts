@@ -1,13 +1,17 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+// Next 16 proxy 컨벤션 (구 middleware). 세션 쿠키 갱신용.
+// 예외가 나도 절대 요청을 죽이지 않도록 방어적으로 작성 (관리자 인가는 /admin 페이지에서 재확인).
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return response;
+
+  try {
+    const supabase = createServerClient(url, key, {
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -22,11 +26,11 @@ export async function middleware(request: NextRequest) {
           );
         },
       },
-    },
-  );
-
-  // 세션 갱신 (관리자 인가는 /admin 레이아웃에서 admins 테이블 기준으로 재확인)
-  await supabase.auth.getUser();
+    });
+    await supabase.auth.getUser();
+  } catch {
+    // 세션 갱신 실패해도 요청 계속
+  }
 
   return response;
 }

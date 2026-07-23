@@ -65,7 +65,7 @@ img { max-width: 100%; }
 .nav { position: sticky; top: 0; z-index: 50; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 .nav-inner { display: flex; align-items: center; gap: 1.1rem; min-height: 72px; padding: 8px 0; }
 .brand { display: flex; align-items: center; gap: 0.6rem; color: var(--ink); margin-right: auto; }
-.brand img { width: 46px; height: 46px; object-fit: contain; }
+.brand img { width: 69px; height: 69px; object-fit: contain; }
 .brand .bname { font-size: 1.28rem; font-weight: 800; line-height: 1; letter-spacing: -0.01em; }
 .brand .bsub { font-size: 0.68rem; color: var(--sub); }
 .nav-links { display: flex; gap: 0.3rem; flex-wrap: wrap; align-items: center; }
