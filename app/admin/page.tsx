@@ -62,6 +62,13 @@ export default async function AdminPage() {
                 첨부 {n.attachments?.[0]?.count ?? 0} · {formatDate(n.created_at)}
                 {n.is_published ? "" : " · 비공개"}
               </span>
+              <Link
+                href={`/admin/notice/${n.id}/edit`}
+                className="more"
+                style={{ fontSize: "0.9rem", flex: "none" }}
+              >
+                수정
+              </Link>
             </li>
           ),
         )}

@@ -128,6 +128,8 @@ img { max-width: 100%; }
 .prose h3 { font-size: 1.15rem; margin: 1.2rem 0 0.5rem; }
 .prose ul, .prose ol { margin: 0 0 1rem; padding-left: 1.3rem; }
 .prose a { text-decoration: underline; }
+.prose img { max-width: 100%; height: auto; border-radius: 12px; margin: 0.6rem 0 1.2rem; box-shadow: var(--shadow-card); }
+.prose hr { border: none; border-top: 1px solid var(--line); margin: 1.6rem 0; }
 .attach { background: var(--soft); border: 1px solid var(--line); border-radius: 16px; padding: 1.1rem 1.2rem; margin: 1.4rem 0; }
 .attach h4 { margin: 0 0 0.7rem; font-size: 0.95rem; }
 .dlbtn { display: flex; align-items: center; gap: 0.7rem; width: 100%; text-align: left; background: #fff; border: 1px solid var(--line2); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.55rem; font-size: 1rem; font-weight: 600; color: var(--ink); }
