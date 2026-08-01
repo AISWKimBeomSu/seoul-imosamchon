@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import ApplyButton from "@/components/ApplyButton";
 
 export default function SiteHeader() {
   return (
@@ -22,11 +23,23 @@ export default function SiteHeader() {
         <nav className="nav-links" aria-label="주요 메뉴">
           <Link href="/">홈</Link>
           <Link href="/about">브랜드소개</Link>
+          <Link href="/people">소개</Link>
           <Link href="/notice">공지사항</Link>
           <Link href="/faq">FAQ</Link>
-          <Link href="/apply" className="btn btn-primary nav-cta">
-            신청하기
+          <Link
+            href="/guest"
+            className="nav-en"
+            lang="en"
+            aria-label="English page for guests"
+          >
+            EN
           </Link>
+          {/* 클릭 1회로 구글폼까지. 마감되면 자동으로 '접수 마감'이 된다 */}
+          <ApplyButton
+            source="nav"
+            className="btn btn-primary nav-cta"
+            label="신청하기"
+          />
         </nav>
       </div>
     </header>

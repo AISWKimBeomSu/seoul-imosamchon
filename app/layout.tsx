@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const noto = Noto_Sans_KR({
@@ -32,7 +33,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko" className={noto.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* 쿠키리스 페이지뷰 — KPI 분모(신청 시작률의 '세션') 확보용 */}
+        <Analytics />
+      </body>
     </html>
   );
 }

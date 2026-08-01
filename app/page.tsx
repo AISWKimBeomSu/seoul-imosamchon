@@ -1,21 +1,34 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
+import { getPeople } from "@/lib/people.server";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import NoticeCard from "@/components/NoticeCard";
+import ApplyButton from "@/components/ApplyButton";
+import PeopleStrip from "@/components/PeopleStrip";
+import PopupMount from "@/components/PopupMount";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+async function getLatestNotices() {
   const supabase = await createClient();
-  const { data: notices } = await supabase
+  const { data } = await supabase
     .from("notices")
     .select("id, category, title, dday, created_at, attachments(count)")
     .eq("is_published", true)
     .order("pinned", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(4);
+  return data ?? [];
+}
+
+export default async function Home() {
+  // 병렬 실행 — 직렬로 쌓이면 그만큼 LCP가 밀린다
+  const [notices, seniors] = await Promise.all([
+    getLatestNotices(),
+    getPeople("senior"),
+  ]);
 
   return (
     <>
@@ -43,9 +56,8 @@ export default async function Home() {
               만 60세 이상 시니어와 함께하는 유급 로컬 체험.
             </p>
             <div className="hero-actions">
-              <Link className="btn btn-primary" href="/apply">
-                신청하기
-              </Link>
+              {/* 클릭 1회로 구글폼까지 (v1.1 이전에는 4회였다) */}
+              <ApplyButton source="hero" label="신청하기" />
               <Link className="link-chev" href="/notice">
                 모집 공고 보기 ›
               </Link>
@@ -67,7 +79,7 @@ export default async function Home() {
                 공지사항 전체보기 →
               </Link>
             </div>
-            {notices && notices.length > 0 ? (
+            {notices.length > 0 ? (
               <div className="cards">
                 {notices.map((n) => (
                   <NoticeCard key={n.id} n={n} />
@@ -78,8 +90,11 @@ export default async function Home() {
             )}
           </div>
         </section>
+
+        <PeopleStrip people={seniors} />
       </main>
       <SiteFooter />
+      <PopupMount page="home" />
     </>
   );
 }

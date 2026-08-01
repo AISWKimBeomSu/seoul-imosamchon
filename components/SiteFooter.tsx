@@ -21,9 +21,11 @@ export default function SiteFooter() {
             <h4>바로가기</h4>
             <ul>
               <li><Link href="/about">브랜드소개</Link></li>
+              <li><Link href="/people">우리 이모·삼촌</Link></li>
               <li><Link href="/notice">공지사항</Link></li>
               <li><Link href="/faq">FAQ</Link></li>
               <li><Link href="/apply">신청하기</Link></li>
+              <li><Link href="/guest" lang="en">For guests (EN)</Link></li>
             </ul>
           </div>
           <div>

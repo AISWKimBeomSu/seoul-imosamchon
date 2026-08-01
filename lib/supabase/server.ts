@@ -1,3 +1,5 @@
+import "server-only"; // 클라이언트에서 임포트하면 빌드가 즉시 실패한다
+
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 

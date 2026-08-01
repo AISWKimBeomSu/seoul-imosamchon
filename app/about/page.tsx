@@ -1,6 +1,10 @@
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import ApplyButton from "@/components/ApplyButton";
+import PopupMount from "@/components/PopupMount";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = { title: "브랜드소개" };
 
@@ -61,14 +65,23 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div style={{ marginTop: "1.8rem" }}>
-            <Link className="btn btn-primary" href="/apply">
-              시니어 호스트 신청하기
+          <div
+            style={{
+              marginTop: "1.8rem",
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "0.7rem",
+            }}
+          >
+            <ApplyButton source="about" label="시니어 호스트 신청하기" />
+            <Link className="btn btn-ghost" href="/people">
+              함께하는 분들 보기
             </Link>
           </div>
         </div>
       </main>
       <SiteFooter />
+      <PopupMount page="other" />
     </>
   );
 }

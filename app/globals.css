@@ -184,3 +184,166 @@ details[open] .faq-q::after { content: "\2212"; }
   .nav .bsub { display: none; }
   .about-tracks { grid-template-columns: 1fr !important; }
 }
+
+/* ===================================================================
+   v1.1 — 지원 퍼널 연결 + 사람 소개
+   =================================================================== */
+
+/* ---- 접근성 유틸 ---- */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* 마감 상태 CTA — 버튼이 사라지지 않고 '마감'으로 남는다 */
+.btn.is-closed {
+  background: var(--soft2); color: #6e665c; border-color: var(--line2);
+  box-shadow: none; cursor: default; pointer-events: none;
+}
+
+/* 상단 내비 EN 링크 */
+.nav-en {
+  font-size: 0.82rem; font-weight: 800; letter-spacing: 0.04em;
+  color: var(--point) !important; border: 1.5px solid var(--line2);
+  border-radius: 999px; padding: 0.4rem 0.7rem !important; line-height: 1;
+  display: inline-flex; align-items: center; min-height: 34px;
+}
+.nav-en:hover { background: var(--point-soft); border-color: var(--point); }
+
+/* ---- QR 패널 ---- */
+.qr-panel {
+  margin: 0; display: flex; flex-direction: column; align-items: center; gap: 0.55rem;
+  background: var(--soft); border: 1px solid var(--line); border-radius: 18px;
+  padding: 1.2rem 1rem;
+}
+.qr-panel img { background: #fff; border-radius: 12px; padding: 8px; border: 1px solid var(--line2); }
+.qr-panel figcaption { color: var(--sub); font-size: 0.9rem; text-align: center; }
+.qr-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+
+/* ---- 팝업 ---- */
+.popup { border: none; padding: 0; background: transparent; max-width: min(92vw, 460px); }
+.popup::backdrop { background: rgba(28, 26, 23, 0.55); }
+.popup-inner {
+  background: #fff; border-radius: 22px; padding: 1.1rem 1.4rem 1.3rem;
+  box-shadow: var(--shadow-card-hover); text-align: center;
+  display: flex; flex-direction: column;
+}
+/* 닫기 버튼: 56×56 이상 + 아이콘 단독 금지 (WCAG 2.5.8 초과 달성) */
+.popup-close {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
+  min-height: 56px; min-width: 56px; padding: 0 1rem;
+  align-self: flex-end; margin-bottom: 0.2rem;
+  border: 1px solid var(--line2); border-radius: 999px;
+  background: #fff; color: var(--ink); font-weight: 700; font-size: 0.95rem;
+  font-family: var(--font-sans); cursor: pointer;
+}
+.popup-close:hover { background: var(--soft); border-color: var(--point); color: var(--point); }
+.popup-eyebrow { color: var(--point); font-weight: 700; font-size: 0.86rem; }
+.popup-title { font-size: clamp(1.25rem, 4vw, 1.55rem); font-weight: 800; margin: 0.3rem 0 0.5rem; line-height: 1.35; }
+.popup-body { color: #4b453d; margin-bottom: 0.9rem; font-size: 1.02rem; }
+.popup-cta { width: 100%; margin-top: 0.3rem; }
+.popup-copy { margin-top: 0.55rem; }
+.popup-foot { display: flex; justify-content: center; gap: 1.1rem; margin-top: 0.8rem; flex-wrap: wrap; }
+.popup-link {
+  background: none; border: none; color: var(--sub); font-size: 0.9rem;
+  font-family: var(--font-sans); text-decoration: underline; cursor: pointer;
+  min-height: 44px; padding: 0 0.3rem;
+}
+.popup-link:hover { color: var(--point); }
+
+/* ★ QR은 '큰 화면 + 정밀 포인터'에서만 보인다.
+   자기 폰 화면의 QR은 자기 폰으로 스캔할 수 없다 (PLAN.md §1.3) */
+.popup-qr { display: none; }
+@media (min-width: 768px) and (pointer: fine) {
+  .popup-qr { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; margin: 0.5rem 0 1rem; }
+  .popup-qr img { background: #fff; border: 1px solid var(--line2); border-radius: 12px; padding: 6px; }
+  .popup-qr span { color: var(--sub); font-size: 0.86rem; }
+  .popup-copy { display: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .popup[data-mounted="1"] .popup-inner { animation: popup-in 0.22s ease-out; }
+  @keyframes popup-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+}
+
+/* 모바일: 하단 시트 — 주소창·노치를 피한다 */
+@media (max-width: 520px) {
+  .popup { max-width: 100vw; width: 100vw; margin: auto auto 0; }
+  .popup-inner { border-radius: 22px 22px 0 0; padding-bottom: calc(1.3rem + env(safe-area-inset-bottom)); }
+}
+
+/* ---- 인물 카드 ---- */
+.people-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+.people-grid.team { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+
+.pcard {
+  background: #fff; border: 1px solid #f1eee4; border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card); padding: 1.4rem 1.2rem 1.3rem;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.pcard:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
+.pavatar { border-radius: 50%; object-fit: cover; background: var(--soft2); }
+.pavatar-fallback {
+  display: grid; place-items: center; border-radius: 50%;
+  background: var(--brand); color: var(--brand-ink);
+  font-weight: 800; font-size: 2.4rem; line-height: 1; user-select: none;
+}
+.pcard.team .pavatar-fallback { font-size: 1.9rem; }
+.pcard h3 { font-size: 1.22rem; font-weight: 800; margin-top: 0.9rem; }
+.pcard-role { color: var(--point); font-weight: 700; font-size: 0.92rem; margin-top: 0.2rem; }
+.pcard-tagline { color: #4b453d; margin-top: 0.6rem; font-size: 0.98rem; }
+.pcard-quote {
+  margin: 0.9rem 0 0; padding: 0.7rem 0.9rem; border-radius: 12px;
+  background: var(--point-soft); color: var(--point-dark);
+  font-size: 0.96rem; line-height: 1.6;
+}
+.pcard-tags { list-style: none; margin: 0.85rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.35rem; justify-content: center; }
+.pcard-tags li {
+  font-size: 0.76rem; font-weight: 700; padding: 0.25rem 0.55rem;
+  border-radius: 8px; background: var(--soft2); color: #4b453d;
+}
+
+/* 소개 페이지 */
+.people-hero { border-bottom: 1px solid var(--line); padding-bottom: 1.6rem; margin-bottom: 2rem; }
+.people-sec { margin-bottom: 3rem; scroll-margin-top: 88px; }
+.people-cta {
+  margin-top: 1rem; background: var(--soft); border: 1px solid var(--line);
+  border-radius: 20px; padding: 1.8rem 1.4rem; text-align: center;
+}
+.people-cta h2 { font-size: clamp(1.3rem, 2.6vw, 1.7rem); font-weight: 800; margin-bottom: 0.4rem; }
+.people-cta p { color: var(--sub); margin-bottom: 1.2rem; }
+
+/* ---- 손님 안내(EN) ---- */
+.guest-hero { text-align: center; padding: 40px 0 30px; border-bottom: 1px solid var(--line); }
+.guest-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.guest-step { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: var(--brand); color: var(--brand-ink); font-weight: 800; margin-bottom: 0.6rem; }
+
+/* ---- 관리자 확장 ---- */
+.admin-status { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.admin-stat {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 0.95rem 1.1rem;
+  display: flex; flex-direction: column; gap: 0.25rem;
+}
+.admin-stat .k { font-size: 0.8rem; color: var(--sub); font-weight: 700; }
+.admin-stat .v { font-weight: 800; font-size: 1.05rem; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 0.4rem; }
+.dot.on { background: var(--point); }
+.dot.off { background: #c9c3b8; }
+.admin-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.6rem; }
+.admin-bars { display: flex; flex-direction: column; gap: 0.5rem; }
+.admin-bar { display: flex; align-items: center; gap: 0.7rem; font-size: 0.92rem; }
+.admin-bar .lbl { min-width: 7.5em; color: #4b453d; }
+.admin-bar .track { flex: 1; height: 10px; background: var(--soft2); border-radius: 999px; overflow: hidden; }
+.admin-bar .fill { height: 100%; background: var(--point); border-radius: 999px; }
+.admin-bar .n { font-weight: 800; min-width: 2.5em; text-align: right; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.badge { font-size: 0.74rem; font-weight: 800; padding: 0.24rem 0.55rem; border-radius: 8px; }
+.badge.live { background: var(--brand); color: var(--brand-ink); }
+.badge.soon { background: var(--gold-soft); color: var(--gold-ink); }
+.badge.done { background: #eee; color: #6e665c; }
+.badge.draft { background: var(--point-soft); color: var(--point-dark); }
+
+@media (max-width: 620px) {
+  .field-row { grid-template-columns: 1fr; }
+}

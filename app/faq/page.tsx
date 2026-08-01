@@ -1,5 +1,9 @@
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import ApplyButton from "@/components/ApplyButton";
+import PopupMount from "@/components/PopupMount";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = { title: "FAQ" };
 
@@ -22,7 +26,7 @@ const FAQS: { q: string; a: string }[] = [
   },
 ];
 
-export default function FaqPage() {
+export default async function FaqPage() {
   return (
     <>
       <SiteHeader />
@@ -40,9 +44,16 @@ export default function FaqPage() {
               </details>
             ))}
           </div>
+
+          <div className="people-cta" style={{ marginTop: "2rem" }}>
+            <h2>궁금증이 풀리셨나요?</h2>
+            <p>더 궁금한 점은 신청 후에도 전화·이메일로 도와드립니다.</p>
+            <ApplyButton source="apply" />
+          </div>
         </div>
       </main>
       <SiteFooter />
+      <PopupMount page="other" />
     </>
   );
 }

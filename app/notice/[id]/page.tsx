@@ -6,6 +6,10 @@ import rehypeSanitize from "rehype-sanitize";
 import { createClient } from "@/lib/supabase/server";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import ApplyButton from "@/components/ApplyButton";
+import PopupMount from "@/components/PopupMount";
+import { getSiteConfig } from "@/lib/config";
+import { goHref } from "@/lib/links";
 import { tagClass, ddayLabel, formatDate, formatBytes } from "@/lib/notices";
 
 export const dynamic = "force-dynamic";
@@ -62,6 +66,13 @@ export default async function NoticeDetailPage({
   );
   const dd = ddayLabel(notice.dday);
 
+  // 공지별 폼이 따로 지정돼 있으면 그것을, 없으면 전역 폼을 쓴다(PLAN.md F1-6).
+  // 전역 폼과 같은 주소라면 계측 경유(/api/go)로 보내 클릭을 셀 수 있게 한다.
+  const cfg = await getSiteConfig();
+  const noticeFormUrl: string | null = notice.google_form_url;
+  const useTrackedCta =
+    !noticeFormUrl || noticeFormUrl === cfg.senior_form_url;
+
   return (
     <>
       <SiteHeader />
@@ -87,6 +98,27 @@ export default async function NoticeDetailPage({
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSanitize]}
+                components={{
+                  // 공지 본문에 구글폼 주소를 그대로 적어두는 경우가 많다.
+                  // 그 링크만 계측·마감 처리를 통째로 우회하므로, 본문(DB)은
+                  // 손대지 않고 렌더 시점에 /api/go 로 바꿔 준다.
+                  a({ href, children, ...props }) {
+                    const isGlobalForm =
+                      Boolean(href) &&
+                      Boolean(cfg.senior_form_url) &&
+                      href === cfg.senior_form_url;
+                    return (
+                      <a
+                        {...props}
+                        href={isGlobalForm ? goHref("senior", "notice") : href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {children}
+                      </a>
+                    );
+                  },
+                }}
               >
                 {notice.body}
               </ReactMarkdown>
@@ -114,14 +146,17 @@ export default async function NoticeDetailPage({
           )}
 
           <div className="apply-card">
-            {notice.google_form_url && (
+            {useTrackedCta ? (
+              <ApplyButton source="notice" />
+            ) : (
               <a
                 className="btn btn-primary"
-                href={notice.google_form_url}
+                href={noticeFormUrl!}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 휴대폰으로 5분 신청하기
+                <span className="sr-only"> (새 창에서 열립니다)</span>
               </a>
             )}
             <Link className="btn btn-ghost" href="/apply">
@@ -131,6 +166,7 @@ export default async function NoticeDetailPage({
         </div>
       </main>
       <SiteFooter />
+      <PopupMount page="other" />
     </>
   );
 }

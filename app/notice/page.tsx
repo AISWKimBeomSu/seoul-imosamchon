@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import NoticeCard from "@/components/NoticeCard";
+import PopupMount from "@/components/PopupMount";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,7 @@ export default async function NoticeListPage() {
         </div>
       </main>
       <SiteFooter />
+      <PopupMount page="other" />
     </>
   );
 }
