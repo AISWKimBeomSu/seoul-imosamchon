@@ -20,6 +20,10 @@ export default function AdminNav({ current }: { current: string }) {
           {it.label}
         </Link>
       ))}
+      {/* 게시 전에 실제 화면을 확인하는 통로. 관리자 세션이 있을 때만 동작한다. */}
+      <Link href="/?preview=1" className="btn btn-ghost nav-cta">
+        미리보기 ↗
+      </Link>
     </nav>
   );
 }

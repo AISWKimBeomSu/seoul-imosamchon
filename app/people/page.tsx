@@ -3,7 +3,9 @@ import SiteFooter from "@/components/SiteFooter";
 import PersonCard from "@/components/PersonCard";
 import ApplyButton from "@/components/ApplyButton";
 import PopupMount from "@/components/PopupMount";
+import PreviewBanner from "@/components/PreviewBanner";
 import { getPeople } from "@/lib/people.server";
+import { isPreviewMode } from "@/lib/preview";
 
 export const dynamic = "force-dynamic";
 
@@ -19,14 +21,27 @@ export const metadata = {
   },
 };
 
-export default async function PeoplePage() {
+export default async function PeoplePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ preview?: string }>;
+}) {
+  const { preview } = await searchParams;
+  const isPreview = await isPreviewMode(preview);
+
   const [seniors, team] = await Promise.all([
-    getPeople("senior"),
-    getPeople("team"),
+    getPeople("senior", { includeUnpublished: isPreview }),
+    getPeople("team", { includeUnpublished: isPreview }),
   ]);
 
   return (
     <>
+      {isPreview && (
+        <PreviewBanner
+          note="아직 공개하지 않은 분들까지 함께 보여주고 있습니다."
+          backTo="/admin/people"
+        />
+      )}
       <SiteHeader />
       <main className="section">
         <div className="wrap">
@@ -110,7 +125,7 @@ export default async function PeoplePage() {
         </div>
       </main>
       <SiteFooter />
-      <PopupMount page="other" />
+      <PopupMount page="other" preview={isPreview} />
     </>
   );
 }

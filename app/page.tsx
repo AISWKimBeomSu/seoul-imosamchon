@@ -8,6 +8,8 @@ import NoticeCard from "@/components/NoticeCard";
 import ApplyButton from "@/components/ApplyButton";
 import PeopleStrip from "@/components/PeopleStrip";
 import PopupMount from "@/components/PopupMount";
+import PreviewBanner from "@/components/PreviewBanner";
+import { isPreviewMode } from "@/lib/preview";
 
 export const dynamic = "force-dynamic";
 
@@ -23,15 +25,25 @@ async function getLatestNotices() {
   return data ?? [];
 }
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ preview?: string }>;
+}) {
+  const { preview } = await searchParams;
+  const isPreview = await isPreviewMode(preview);
+
   // 병렬 실행 — 직렬로 쌓이면 그만큼 LCP가 밀린다
   const [notices, seniors] = await Promise.all([
     getLatestNotices(),
-    getPeople("senior"),
+    getPeople("senior", { includeUnpublished: isPreview }),
   ]);
 
   return (
     <>
+      {isPreview && (
+        <PreviewBanner note="비공개 인물과 미게시 팝업을 함께 보여주고 있습니다." />
+      )}
       <SiteHeader />
       <main>
         <section className="hero">
@@ -94,7 +106,7 @@ export default async function Home() {
         <PeopleStrip people={seniors} />
       </main>
       <SiteFooter />
-      <PopupMount page="home" />
+      <PopupMount page="home" preview={isPreview} />
     </>
   );
 }

@@ -14,10 +14,12 @@ import PopupNotice from "@/components/PopupNotice";
  */
 export default async function PopupMount({
   page,
+  preview = false,
 }: {
   page: "home" | "other";
+  preview?: boolean;
 }) {
-  const popup = await getActivePopup(page);
+  const popup = await getActivePopup(page, { preview });
   if (!popup) return null;
 
   const cfg = await getSiteConfig();
@@ -53,6 +55,7 @@ export default async function PopupMount({
       external={external}
       qrSrc={qrSrc}
       shareUrl={href ? `${site}${href}` : null}
+      preview={preview}
     />
   );
 }

@@ -30,19 +30,25 @@ const COLS =
  */
 export async function getActivePopup(
   page: "home" | "other",
+  opts?: { preview?: boolean },
 ): Promise<Popup | null> {
   const nowIso = new Date().toISOString();
   const scopes = page === "home" ? ["home", "all"] : ["all"];
 
   try {
     const supabase = await createClient();
-    const { data } = await supabase
-      .from("popups")
-      .select(COLS)
-      .eq("is_published", true)
-      .in("scope", scopes)
-      .lte("starts_at", nowIso)
-      .or(`ends_at.is.null,ends_at.gt.${nowIso}`)
+    let q = supabase.from("popups").select(COLS).in("scope", scopes);
+
+    // 미리보기에서는 게시 여부와 기간을 무시한다.
+    // "아직 시작 안 한 팝업이 어떻게 보이는지"를 확인하는 게 목적이기 때문이다.
+    if (!opts?.preview) {
+      q = q
+        .eq("is_published", true)
+        .lte("starts_at", nowIso)
+        .or(`ends_at.is.null,ends_at.gt.${nowIso}`);
+    }
+
+    const { data } = await q
       .order("sort", { ascending: true })
       .order("created_at", { ascending: false })
       .limit(1);

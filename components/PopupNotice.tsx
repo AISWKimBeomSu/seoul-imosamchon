@@ -44,6 +44,7 @@ export default function PopupNotice({
   external,
   qrSrc,
   shareUrl,
+  preview = false,
 }: {
   id: string;
   title: string;
@@ -54,12 +55,15 @@ export default function PopupNotice({
   external: boolean;
   qrSrc: string | null;
   shareUrl: string | null;
+  preview?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (isDismissed(id)) return;
+    // 미리보기에서는 '오늘 하루 보지 않기' 기록을 무시한다.
+    // 한 번 닫으면 다시 못 보는 미리보기는 쓸모가 없다.
+    if (!preview && isDismissed(id)) return;
 
     const timer = window.setTimeout(() => {
       const el = ref.current;
@@ -75,10 +79,10 @@ export default function PopupNotice({
       window.clearTimeout(timer);
       document.body.style.overflow = "";
     };
-  }, [id]);
+  }, [id, preview]);
 
   function close(mode: "today" | "forever" | "once") {
-    if (mode !== "once") remember(id, mode);
+    if (mode !== "once" && !preview) remember(id, mode);
     ref.current?.close(); // 닫으면 브라우저가 원래 포커스를 복원한다
     document.body.style.overflow = "";
   }

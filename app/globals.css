@@ -189,6 +189,16 @@ details[open] .faq-q::after { content: "\2212"; }
    v1.1 — 지원 퍼널 연결 + 사람 소개
    =================================================================== */
 
+/* ---- 관리자 미리보기 배너 ---- */
+.preview-bar {
+  background: var(--gold-soft); border-bottom: 2px solid var(--gold);
+  color: var(--gold-ink); font-size: 0.92rem; padding: 0.6rem 0;
+  position: sticky; top: 0; z-index: 60;
+}
+.preview-bar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.preview-bar b { background: var(--gold); color: #fff; border-radius: 8px; padding: 0.15rem 0.5rem; font-size: 0.8rem; }
+.preview-bar a { color: var(--gold-ink); font-weight: 700; text-decoration: underline; margin-left: auto; }
+
 /* ---- 접근성 유틸 ---- */
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
