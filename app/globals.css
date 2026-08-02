@@ -147,7 +147,13 @@ img { max-width: 100%; }
 .foot ul a { color: var(--ink); }
 .foot ul a:hover { color: var(--point); }
 .foot-info { font-size: 0.92rem; color: #544e46; line-height: 1.85; }
-.foot-legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding-top: 18px; color: #a99f90; font-size: 0.8rem; }
+.foot-legal { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding-top: 18px; color: #a99f90; font-size: 0.8rem; }
+.popup-reset {
+  background: none; border: none; padding: 0.3rem 0; cursor: pointer;
+  font-family: var(--font-sans); font-size: 0.8rem; color: var(--sub);
+  text-decoration: underline; margin-right: auto;
+}
+.popup-reset:hover { color: var(--point); }
 
 /* ---- Admin / forms ---- */
 .admin-wrap { max-width: 760px; margin: 0 auto; padding: 32px 24px 60px; width: 100%; }

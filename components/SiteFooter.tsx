@@ -1,4 +1,5 @@
 import Link from "next/link";
+import PopupResetLink from "@/components/PopupResetLink";
 import { getT } from "@/lib/locale.server";
 
 const REP_NAME = process.env.NEXT_PUBLIC_REP_NAME || "신승민";
@@ -42,6 +43,8 @@ export default async function SiteFooter() {
         </div>
         <div className="foot-legal">
           <span>© 2026 {t("brand.name")} (Team theOne)</span>
+          {/* 숨긴 기록이 있을 때만 나타난다 */}
+          <PopupResetLink label={t("foot.showPopup")} />
           <Link href="/" style={{ color: "var(--point)", fontWeight: 700 }}>
             {t("foot.top")}
           </Link>

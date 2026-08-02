@@ -322,6 +322,10 @@ const DICT: Dict = {
     en: "Supported by the Seoul 50 Plus Foundation",
   },
   "foot.top": { ko: "↑ 처음으로", en: "↑ Back to top" },
+  "foot.showPopup": {
+    ko: "공지 팝업 다시 보기",
+    en: "Show the notice popup again",
+  },
 };
 
 export function translator(locale: Locale) {

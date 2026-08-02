@@ -83,7 +83,6 @@ export default async function PopupMount({
         copied: t("common.copied"),
         copyFail: t("common.copyFail"),
         hideToday: locale === "en" ? "Hide for today" : "오늘 하루 보지 않기",
-        hideForever: locale === "en" ? "Do not show again" : "다시 보지 않기",
       }}
     />
   );
