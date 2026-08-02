@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getAdmin } from "@/lib/supabase/server";
-import { getSiteConfig, formState } from "@/lib/config";
+import { createClient, getAdmin } from "@/lib/supabase/server";
+import { getSiteConfig } from "@/lib/config";
+import { FORM_ADMIN_COLS, isFormAvailable, type AdminForm } from "@/lib/forms";
 import AdminNav from "@/components/AdminNav";
 import QrPanel from "@/components/QrPanel";
 import SettingsForm from "./SettingsForm";
+import ContactForm from "./ContactForm";
 
 export const dynamic = "force-dynamic";
 
@@ -14,9 +16,17 @@ export default async function AdminSettingsPage() {
   const admin = await getAdmin();
   if (!admin) redirect("/admin/login");
 
-  const cfg = await getSiteConfig();
-  const senior = formState(cfg, "senior");
-  const guest = formState(cfg, "guest");
+  const supabase = await createClient();
+  const [{ data }, cfg] = await Promise.all([
+    supabase
+      .from("forms")
+      .select(FORM_ADMIN_COLS)
+      .order("sort", { ascending: true })
+      .order("created_at", { ascending: true }),
+    getSiteConfig(),
+  ]);
+
+  const forms = (data ?? []) as AdminForm[];
 
   return (
     <main className="admin-wrap">
@@ -24,59 +34,66 @@ export default async function AdminSettingsPage() {
         <div>
           <h1 style={{ fontSize: "1.6rem", fontWeight: 800 }}>신청 폼 설정</h1>
           <p className="sec-sub">
-            여기서 바꾼 주소가 사이트의 모든 신청 버튼과 QR에 그대로 쓰입니다.
+            여기서 바꾼 주소가 신청 페이지·팝업·QR에 그대로 쓰입니다.
           </p>
         </div>
-        <Link href="/" className="btn btn-ghost nav-cta">
-          사이트 보기
+        <Link href="/apply" className="btn btn-ghost nav-cta">
+          신청 페이지 보기
         </Link>
       </div>
 
       <AdminNav current="/admin/settings" />
 
       <div className="admin-status">
-        <div className="admin-stat">
-          <span className="k">시니어 모집 폼</span>
-          <span className="v">
-            <span className={`dot ${senior.available ? "on" : "off"}`} />
-            {senior.available ? "접수 중" : senior.url ? "접수 마감" : "주소 미설정"}
-          </span>
-        </div>
-        <div className="admin-stat">
-          <span className="k">손님 모객 폼</span>
-          <span className="v">
-            <span className={`dot ${guest.available ? "on" : "off"}`} />
-            {guest.available ? "접수 중" : guest.url ? "접수 마감" : "주소 미설정"}
-          </span>
-        </div>
+        {forms.map((f) => (
+          <div className="admin-stat" key={f.id}>
+            <span className="k">{f.title}</span>
+            <span className="v">
+              <span className={`dot ${isFormAvailable(f) ? "on" : "off"}`} />
+              {isFormAvailable(f)
+                ? "접수 중"
+                : f.url
+                  ? "준비 중"
+                  : "주소 미설정"}
+            </span>
+          </div>
+        ))}
       </div>
 
-      <SettingsForm initial={cfg} />
+      {forms.map((f) => (
+        <SettingsForm key={f.id} form={f} />
+      ))}
 
-      {senior.available && (
-        <>
-          <h2 style={{ fontSize: "1.15rem", fontWeight: 800, margin: "2rem 0 0.3rem" }}>
-            시니어 모집 QR
-          </h2>
-          <p className="sec-sub" style={{ marginBottom: "1rem" }}>
-            폼 주소를 바꾸면 이 QR도 자동으로 바뀝니다. 포스터·현수막에 쓰실 땐 아래에서 저장하세요.
-          </p>
-          <div style={{ maxWidth: 380 }}>
-            <QrPanel caption="스캔하면 신청 화면이 열립니다 (QR 유입도 자동 집계됩니다)" />
-          </div>
-        </>
-      )}
+      <h2 style={{ fontSize: "1.2rem", fontWeight: 800, margin: "2rem 0 0.8rem" }}>
+        연락 정보
+      </h2>
+      <ContactForm initial={cfg} />
 
-      {guest.available && (
-        <>
-          <h2 style={{ fontSize: "1.15rem", fontWeight: 800, margin: "2rem 0 1rem" }}>
-            손님 모객 QR
-          </h2>
-          <div style={{ maxWidth: 380 }}>
-            <QrPanel linkKey="guest" caption="Scan to open the booking form" />
+      <h2 style={{ fontSize: "1.2rem", fontWeight: 800, margin: "2.2rem 0 0.3rem" }}>
+        QR 코드
+      </h2>
+      <p className="sec-sub" style={{ marginBottom: "1rem" }}>
+        폼 주소를 바꾸면 QR도 자동으로 바뀝니다. 포스터·현수막에 쓰실 땐 저장해서 쓰세요.
+      </p>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
+          gap: 16,
+        }}
+      >
+        {forms.filter(isFormAvailable).map((f) => (
+          <div key={f.id}>
+            <p style={{ fontWeight: 800, marginBottom: "0.5rem" }}>{f.title}</p>
+            <QrPanel formKey={f.key} caption="스캔하면 신청 화면이 열립니다" />
           </div>
-        </>
-      )}
+        ))}
+        {forms.filter(isFormAvailable).length === 0 && (
+          <div className="empty">
+            접수 중인 폼이 없습니다. 위에서 구글폼 주소를 넣고 &lsquo;접수 중&rsquo;으로 바꿔 주세요.
+          </div>
+        )}
+      </div>
     </main>
   );
 }

@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient, getAdmin } from "@/lib/supabase/server";
-import { getSiteConfig, formState } from "@/lib/config";
-import { getActivePopup } from "@/lib/popups";
+import { getForms } from "@/lib/forms.server";
+import { isFormAvailable } from "@/lib/forms";
+import { getActivePopups } from "@/lib/popups.server";
 import { signOut } from "./actions";
 import NoticeComposer from "./NoticeComposer";
 import AdminNav from "@/components/AdminNav";
@@ -16,22 +17,19 @@ export default async function AdminPage() {
   if (!admin) redirect("/admin/login");
 
   const supabase = await createClient();
-  const [{ data: notices }, cfg, popup, { count: peopleCount }] =
+  const [{ data: notices }, forms, popups, { count: peopleCount }] =
     await Promise.all([
       supabase
         .from("notices")
         .select("id, category, title, is_published, created_at, attachments(count)")
         .order("created_at", { ascending: false }),
-      getSiteConfig(),
-      getActivePopup("home"),
+      getForms(),
+      getActivePopups("home"),
       supabase
         .from("people")
         .select("id", { count: "exact", head: true })
         .eq("is_published", true),
     ]);
-
-  const senior = formState(cfg, "senior");
-  const guest = formState(cfg, "guest");
 
   return (
     <main className="admin-wrap">
@@ -58,26 +56,23 @@ export default async function AdminPage() {
 
       {/* 로그인 직후 "지금 무엇이 켜져 있는가"를 한눈에 */}
       <div className="admin-status">
-        <div className="admin-stat">
-          <span className="k">시니어 모집 폼</span>
-          <span className="v">
-            <span className={`dot ${senior.available ? "on" : "off"}`} />
-            {senior.available ? "접수 중" : senior.url ? "접수 마감" : "미설정"}
-          </span>
-        </div>
-        <div className="admin-stat">
-          <span className="k">손님 모객 폼</span>
-          <span className="v">
-            <span className={`dot ${guest.available ? "on" : "off"}`} />
-            {guest.available ? "접수 중" : guest.url ? "접수 마감" : "미설정"}
-          </span>
-        </div>
+        {forms.map((f) => (
+          <div className="admin-stat" key={f.id}>
+            <span className="k">{f.title}</span>
+            <span className="v">
+              <span className={`dot ${isFormAvailable(f) ? "on" : "off"}`} />
+              {isFormAvailable(f) ? "접수 중" : f.url ? "준비 중" : "미설정"}
+            </span>
+          </div>
+        ))}
         <div className="admin-stat">
           <span className="k">팝업</span>
           <span className="v">
-            <span className={`dot ${popup ? "on" : "off"}`} />
-            {popup
-              ? `노출 중${popup.ends_at ? ` (~${formatDate(popup.ends_at)})` : ""}`
+            <span className={`dot ${popups.length ? "on" : "off"}`} />
+            {popups.length
+              ? `${popups.length}건 노출 중${
+                  popups[0].ends_at ? ` (~${formatDate(popups[0].ends_at)})` : ""
+                }`
               : "없음"}
           </span>
         </div>

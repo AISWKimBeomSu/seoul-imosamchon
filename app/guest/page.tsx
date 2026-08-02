@@ -3,7 +3,9 @@ import SiteFooter from "@/components/SiteFooter";
 import PersonAvatar from "@/components/PersonAvatar";
 import ApplyButton from "@/components/ApplyButton";
 import PopupMount from "@/components/PopupMount";
-import { getSiteConfig, formState } from "@/lib/config";
+import { getSiteConfig } from "@/lib/config";
+import { getFormsFor } from "@/lib/forms.server";
+import { isFormAvailable } from "@/lib/forms";
 import { getPeople } from "@/lib/people.server";
 
 export const dynamic = "force-dynamic";
@@ -45,12 +47,13 @@ export default async function GuestPage({
 }: {
   searchParams: Promise<{ closed?: string }>;
 }) {
-  const [{ closed }, cfg, hosts] = await Promise.all([
+  const [{ closed }, cfg, hosts, guestForms] = await Promise.all([
     searchParams,
     getSiteConfig(),
     getPeople("senior"),
+    getFormsFor("guest"), // 쿠킹클래스 · 하이킹
   ]);
-  const guest = formState(cfg, "guest");
+  const openForms = guestForms.filter(isFormAvailable);
 
   return (
     <>
@@ -86,7 +89,7 @@ export default async function GuestPage({
               thirty years. A kitchen can be rented. That cannot.
             </p>
 
-            {closed === "1" && (
+            {closed && (
               <div
                 className="alert err"
                 role="status"
@@ -97,8 +100,28 @@ export default async function GuestPage({
               </div>
             )}
 
-            {guest.available ? (
-              <ApplyButton linkKey="guest" source="guest" />
+            {openForms.length > 0 ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "0.7rem",
+                  justifyContent: "center",
+                }}
+              >
+                {openForms.map((f) => (
+                  <ApplyButton
+                    key={f.key}
+                    formKey={f.key}
+                    source="guest"
+                    className={
+                      f.key === openForms[0].key
+                        ? "btn btn-primary"
+                        : "btn btn-ghost"
+                    }
+                  />
+                ))}
+              </div>
             ) : (
               <div style={{ color: "var(--sub)" }}>
                 <p style={{ marginBottom: "0.6rem" }}>
@@ -183,8 +206,19 @@ export default async function GuestPage({
                 No Korean needed. A younger team member joins to help with
                 translation.
               </p>
-              {guest.available ? (
-                <ApplyButton linkKey="guest" source="guest" />
+              {openForms.length > 0 ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "0.7rem",
+                    justifyContent: "center",
+                  }}
+                >
+                  {openForms.map((f) => (
+                    <ApplyButton key={f.key} formKey={f.key} source="guest" />
+                  ))}
+                </div>
               ) : (
                 <a className="btn btn-ghost" href={`mailto:${cfg.contact_email}`}>
                   Email us

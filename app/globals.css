@@ -230,13 +230,74 @@ details[open] .faq-q::after { content: "\2212"; }
 .qr-panel figcaption { color: var(--sub); font-size: 0.9rem; text-align: center; }
 .qr-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
 
+/* ---- 신청 카드 (/apply) ---- */
+.fcards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start; }
+.fcard {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card); overflow: hidden;
+  display: flex; flex-direction: column; scroll-margin-top: 92px;
+  border-top: 6px solid var(--point);
+}
+.fcard.accent-gold { border-top-color: var(--gold); }
+.fcard.accent-lime { border-top-color: var(--brand-mid); }
+.fcard.is-highlight { box-shadow: var(--shadow-card-hover); }
+.fcard-poster { background: var(--soft); line-height: 0; }
+.fcard-poster img { width: 100%; height: auto; object-fit: contain; }
+.fcard-body { padding: 1.3rem 1.3rem 1.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.55rem; }
+.fcard-eyebrow { color: var(--point); font-weight: 700; font-size: 0.86rem; }
+.fcard.accent-gold .fcard-eyebrow { color: var(--gold-ink); }
+.fcard-body h2 { font-size: 1.35rem; font-weight: 800; }
+.fcard-desc { color: #4b453d; font-size: 0.99rem; }
+.fcard-qr { display: none; }
+.fcard-qr img { background: #fff; border: 1px solid var(--line2); border-radius: 14px; padding: 8px; }
+.fcard-qr span { display: block; color: var(--sub); font-size: 0.85rem; margin-top: 0.35rem; }
+.fcard-cta { width: 100%; margin-top: 0.3rem; }
+.fcard-copy { width: 100%; }
+.fcard-closed { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; margin-top: 0.3rem; }
+.fcard-closed p { color: var(--sub); font-size: 0.92rem; }
+
+/* QR은 큰 화면 + 정밀 포인터에서만. 자기 폰의 QR은 자기 폰으로 못 찍는다 */
+@media (min-width: 768px) and (pointer: fine) {
+  .fcard-qr { display: block; margin: 0.5rem 0 0.3rem; }
+  .fcard-copy { display: none; }
+}
+
+.apply-alt {
+  margin-top: 2.6rem; background: var(--soft); border: 1px solid var(--line);
+  border-radius: 20px; padding: 1.6rem 1.5rem;
+}
+.apply-alt h2 { font-size: 1.3rem; font-weight: 800; margin: 0.2rem 0 0.2rem; }
+.apply-steps { margin: 0 0 1rem; padding-left: 1.2rem; color: #4b453d; line-height: 1.95; }
+.apply-mail {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+  background: #fff; border: 1px dashed var(--line2); border-radius: 12px; padding: 0.7rem 0.9rem;
+}
+.apply-mail code { font-weight: 700; font-size: 1.02rem; font-family: var(--font-sans); }
+
 /* ---- 팝업 ---- */
 .popup { border: none; padding: 0; background: transparent; max-width: min(92vw, 460px); }
-.popup::backdrop { background: rgba(28, 26, 23, 0.55); }
+.popup.popup-multi { max-width: min(96vw, 940px); }
+.popup::backdrop { background: rgba(28, 26, 23, 0.6); }
 .popup-inner {
   background: #fff; border-radius: 22px; padding: 1.1rem 1.4rem 1.3rem;
   box-shadow: var(--shadow-card-hover); text-align: center;
   display: flex; flex-direction: column;
+  max-height: 92vh; overflow-y: auto;
+}
+.popup-heading { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 800; margin-bottom: 0.9rem; }
+.popup-items { display: grid; grid-template-columns: 1fr; gap: 1.6rem; }
+.popup-multi .popup-items { gap: 1.2rem; }
+.popup-item { display: flex; flex-direction: column; align-items: center; gap: 0.45rem; }
+.popup-multi .popup-item {
+  border: 1px solid var(--line); border-radius: 18px; padding: 1rem 0.9rem 1.1rem;
+  background: #fff;
+}
+.popup-poster { display: block; line-height: 0; width: 100%; border-radius: 14px; overflow: hidden; background: var(--soft); }
+.popup-poster img { width: 100%; height: auto; max-height: 42vh; object-fit: contain; }
+.popup-multi .popup-poster img { max-height: 34vh; }
+
+@media (min-width: 768px) {
+  .popup-multi .popup-items { grid-template-columns: repeat(2, 1fr); }
 }
 /* 닫기 버튼: 56×56 이상 + 아이콘 단독 금지 (WCAG 2.5.8 초과 달성) */
 .popup-close {
@@ -249,7 +310,8 @@ details[open] .faq-q::after { content: "\2212"; }
 }
 .popup-close:hover { background: var(--soft); border-color: var(--point); color: var(--point); }
 .popup-eyebrow { color: var(--point); font-weight: 700; font-size: 0.86rem; }
-.popup-title { font-size: clamp(1.25rem, 4vw, 1.55rem); font-weight: 800; margin: 0.3rem 0 0.5rem; line-height: 1.35; }
+.popup-title { font-size: clamp(1.2rem, 3.6vw, 1.5rem); font-weight: 800; margin: 0.2rem 0 0.4rem; line-height: 1.35; }
+.popup-multi .popup-title { font-size: 1.18rem; }
 .popup-body { color: #4b453d; margin-bottom: 0.9rem; font-size: 1.02rem; }
 .popup-cta { width: 100%; margin-top: 0.3rem; }
 .popup-copy { margin-top: 0.55rem; }
@@ -265,8 +327,8 @@ details[open] .faq-q::after { content: "\2212"; }
    자기 폰 화면의 QR은 자기 폰으로 스캔할 수 없다 (PLAN.md §1.3) */
 .popup-qr { display: none; }
 @media (min-width: 768px) and (pointer: fine) {
-  .popup-qr { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; margin: 0.5rem 0 1rem; }
-  .popup-qr img { background: #fff; border: 1px solid var(--line2); border-radius: 12px; padding: 6px; }
+  .popup-qr { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; margin: 0.5rem 0 0.8rem; }
+  .popup-qr img { background: #fff; border: 1px solid var(--line2); border-radius: 14px; padding: 8px; }
   .popup-qr span { color: var(--sub); font-size: 0.86rem; }
   .popup-copy { display: none; }
 }
@@ -278,8 +340,9 @@ details[open] .faq-q::after { content: "\2212"; }
 
 /* 모바일: 하단 시트 — 주소창·노치를 피한다 */
 @media (max-width: 520px) {
-  .popup { max-width: 100vw; width: 100vw; margin: auto auto 0; }
+  .popup, .popup.popup-multi { max-width: 100vw; width: 100vw; margin: auto auto 0; }
   .popup-inner { border-radius: 22px 22px 0 0; padding-bottom: calc(1.3rem + env(safe-area-inset-bottom)); }
+  .popup-multi .popup-items { gap: 0.9rem; }
 }
 
 /* ---- 인물 카드 ---- */

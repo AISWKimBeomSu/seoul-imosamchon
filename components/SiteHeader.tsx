@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import ApplyButton from "@/components/ApplyButton";
 
 export default function SiteHeader() {
   return (
@@ -34,12 +33,11 @@ export default function SiteHeader() {
           >
             EN
           </Link>
-          {/* 클릭 1회로 구글폼까지. 마감되면 자동으로 '접수 마감'이 된다 */}
-          <ApplyButton
-            source="nav"
-            className="btn btn-primary nav-cta"
-            label="신청하기"
-          />
+          {/* 신청 종류가 여럿이라 폼으로 직행시키지 않고 선택 페이지로 보낸다.
+              폼이 하나뿐일 때는 직행이 맞았지만, 지금은 어느 폼인지 사용자가 정해야 한다. */}
+          <Link href="/apply" className="btn btn-primary nav-cta">
+            신청하기
+          </Link>
         </nav>
       </div>
     </header>

@@ -1,189 +1,120 @@
-import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import CopyEmail from "@/components/CopyEmail";
-import ApplyButton from "@/components/ApplyButton";
-import QrPanel from "@/components/QrPanel";
+import ApplyFormCard from "@/components/ApplyFormCard";
 import PopupMount from "@/components/PopupMount";
-import { getSiteConfig, formState } from "@/lib/config";
+import { getSiteConfig } from "@/lib/config";
+import { getForms } from "@/lib/forms.server";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "신청하기" };
+export const metadata = {
+  title: "신청하기",
+  description:
+    "서울이모삼촌 시니어 호스트 신청, 쿠킹클래스 신청, 하이킹 신청 — 원하시는 곳으로 바로 이동하세요.",
+};
 
 export default async function ApplyPage({
   searchParams,
 }: {
   searchParams: Promise<{ closed?: string }>;
 }) {
-  const [{ closed }, cfg] = await Promise.all([searchParams, getSiteConfig()]);
-  const senior = formState(cfg, "senior");
-  const appEmail = cfg.contact_email;
+  const [{ closed }, cfg, forms] = await Promise.all([
+    searchParams,
+    getSiteConfig(),
+    getForms(),
+  ]);
+
+  // /api/go가 마감 상태에서 되돌려보낸 폼
+  const closedForm = closed ? forms.find((f) => f.key === closed) : undefined;
 
   return (
     <>
       <SiteHeader />
       <main className="section">
-        <div className="wrap" style={{ maxWidth: 900 }}>
+        <div className="wrap">
           <div className="eyebrow">신청하기</div>
           <h1
             style={{
-              fontSize: "clamp(1.6rem,3vw,2rem)",
+              fontSize: "clamp(1.7rem,3.4vw,2.3rem)",
               fontWeight: 800,
-              margin: "0.2rem 0 0.4rem",
+              margin: "0.2rem 0 0.5rem",
             }}
           >
-            편하신 방법으로 신청하세요
+            어떤 신청을 하시나요?
           </h1>
-          <p className="sec-sub" style={{ marginBottom: "1.6rem" }}>
-            휴대폰으로 바로 신청하거나, 종이 신청서를 내려받아 이메일로 보내셔도 됩니다.
+          <p className="sec-sub" style={{ marginBottom: "1.8rem", maxWidth: "52ch" }}>
+            아래에서 하나를 고르시면 신청서가 바로 열립니다. QR을 휴대폰으로 비추셔도 됩니다.
           </p>
 
-          {/* /api/go 가 마감 상태에서 되돌려보낸 경우 */}
-          {closed === "1" && (
+          {closedForm && (
             <div
               className="alert err"
               role="status"
-              style={{ marginBottom: "1.2rem" }}
+              style={{ marginBottom: "1.4rem" }}
             >
-              {cfg.senior_closed_note}
+              <b>{closedForm.title}</b> — {closedForm.closed_note}
             </div>
           )}
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-              gap: 18,
-            }}
-          >
-            <div className="card" style={{ border: "2px solid var(--point)" }}>
-              <span
-                className="ntag noti"
-                style={{ display: "inline-block", marginBottom: "0.7rem" }}
-              >
-                방법 1 · 가장 쉬워요
-              </span>
-              <h2
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: 800,
-                  marginBottom: "0.4rem",
-                }}
-              >
-                휴대폰으로 5분 신청
-              </h2>
-              <p style={{ color: "#4b453d" }}>
-                손가락으로 톡톡 고르면 끝. 한글·워드 작성이 필요 없어요.
-                아래 버튼을 누르면 신청서가 바로 열립니다.
-              </p>
-              <div
-                style={{
-                  marginTop: "1.1rem",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "0.6rem",
-                }}
-              >
-                <ApplyButton source="apply" />
-                <Link className="btn btn-ghost" href="/notice">
-                  모집 공고 읽어보기
-                </Link>
-              </div>
-              <p
-                style={{
-                  color: "var(--sub)",
-                  fontSize: "0.85rem",
-                  marginTop: "0.9rem",
-                }}
-              >
-                지원서는 Google Forms에서 접수되며, 개인정보 처리 주체는 팀 theOne입니다.
-              </p>
+          {forms.length > 0 ? (
+            <div className="fcards">
+              {forms.map((f) => (
+                <ApplyFormCard
+                  key={f.key}
+                  form={f}
+                  highlight={f.key === "senior"}
+                />
+              ))}
             </div>
-
-            <div className="card">
-              <span
-                className="ntag info"
-                style={{ display: "inline-block", marginBottom: "0.7rem" }}
-              >
-                방법 2 · 종이로 하고 싶으면
-              </span>
-              <h2
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: 800,
-                  marginBottom: "0.6rem",
-                }}
-              >
-                신청서 내려받아 이메일로
-              </h2>
-              <ol
-                style={{
-                  margin: "0 0 1rem",
-                  paddingLeft: "1.2rem",
-                  color: "#4b453d",
-                  lineHeight: 1.9,
-                }}
-              >
-                <li>공지사항 모집공고에서 신청서 내려받기</li>
-                <li>출력해서 작성</li>
-                <li>사진 촬영</li>
-                <li>아래 이메일로 전송</li>
-              </ol>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  gap: "0.6rem",
-                  background: "var(--soft)",
-                  border: "1px dashed var(--line2)",
-                  borderRadius: 12,
-                  padding: "0.7rem 0.9rem",
-                }}
-              >
-                <code
-                  style={{
-                    fontWeight: 700,
-                    fontSize: "1.02rem",
-                    fontFamily: "var(--font-sans)",
-                  }}
-                >
-                  {appEmail}
-                </code>
-                <CopyEmail email={appEmail} />
-              </div>
-            </div>
-          </div>
-
-          {/* QR — 자녀가 PC로 보고 부모님 폰으로 넘기는 경로 */}
-          {senior.available && (
-            <div style={{ marginTop: 22, maxWidth: 420 }}>
-              <QrPanel caption="자녀·손주분께 이 화면을 보여드리거나, QR을 저장해 전달하셔도 좋아요" />
+          ) : (
+            <div className="empty">
+              준비 중입니다. 곧 신청을 받을 예정이에요.
             </div>
           )}
 
-          <div
-            style={{
-              marginTop: 20,
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              gap: "0.5rem",
-              background: "var(--point-soft)",
-              borderRadius: 14,
-              padding: "1rem 1.2rem",
-              color: "var(--point-dark)",
-            }}
-          >
-            <b style={{ color: "var(--point)" }}>어려우시면 전화 주세요.</b>
-            <span>
+          {/* 경로 B — 종이 신청서. 시니어 지원자 전용 안전망이다. */}
+          <section className="apply-alt">
+            <div className="eyebrow">그 밖의 방법</div>
+            <h2>손으로 쓴 신청서를 보내고 싶으세요?</h2>
+            <p className="sec-sub" style={{ marginBottom: "1.1rem" }}>
+              시니어 호스트 신청은 종이로도 받습니다. 휴대폰이 어려우시면 이 방법을 쓰세요.
+            </p>
+            <ol className="apply-steps">
+              <li>공지사항 모집공고에서 신청서 내려받기</li>
+              <li>출력해서 작성</li>
+              <li>사진 촬영</li>
+              <li>아래 이메일로 전송</li>
+            </ol>
+            <div className="apply-mail">
+              <code>{cfg.contact_email}</code>
+              <CopyEmail email={cfg.contact_email} />
+            </div>
+            <p
+              style={{
+                marginTop: "1rem",
+                color: "var(--point-dark)",
+                background: "var(--point-soft)",
+                borderRadius: 14,
+                padding: "0.9rem 1.1rem",
+              }}
+            >
+              <b style={{ color: "var(--point)" }}>어려우시면 전화 주세요.</b>{" "}
               자녀·손주분과 함께 신청하셔도 좋아요.
               {cfg.contact_phone
                 ? ` (${cfg.contact_phone})`
                 : " (연락처는 공지에서 안내드립니다.)"}
-            </span>
-          </div>
+            </p>
+            <p
+              style={{
+                color: "var(--sub)",
+                fontSize: "0.85rem",
+                marginTop: "0.9rem",
+              }}
+            >
+              지원서는 Google Forms에서 접수되며, 개인정보 처리 주체는 팀 theOne입니다.
+            </p>
+          </section>
         </div>
       </main>
       <SiteFooter />

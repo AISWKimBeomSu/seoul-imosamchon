@@ -1,12 +1,12 @@
 import { NextResponse, after, userAgent } from "next/server";
-import { getSiteConfig, formState, FORM_URL_PATTERN } from "@/lib/config";
+import { getForm } from "@/lib/forms.server";
+import { FORM_URL_PATTERN, FORM_KEY_PATTERN } from "@/lib/forms";
 import { createServiceClient } from "@/lib/supabase/service";
-import { LINK_KEYS, LINK_SOURCES, type LinkKey } from "@/lib/links";
+import { LINK_SOURCES } from "@/lib/links";
 
 // 리다이렉트가 캐시되면 '마감' 처리가 먹지 않는다.
 export const dynamic = "force-dynamic";
 
-const KEYS = new Set<string>(LINK_KEYS);
 const SOURCES = new Set<string>(LINK_SOURCES);
 
 export async function GET(
@@ -18,19 +18,23 @@ export async function GET(
   const origin = reqUrl.origin;
 
   // ★ 이동 대상은 '키'로만 지정된다. URL을 쿼리로 받지 않으므로
-  //   오픈 리다이렉트가 구조적으로 불가능하다(PLAN.md P3 / §18.1).
-  if (!KEYS.has(key)) {
+  //   오픈 리다이렉트가 구조적으로 불가능하다.
+  //   키가 폼 목록에 없으면 그대로 신청 페이지로 되돌린다.
+  if (!FORM_KEY_PATTERN.test(key)) {
     return NextResponse.redirect(new URL("/apply", origin), 302);
   }
-  const linkKey = key as LinkKey;
 
-  const cfg = await getSiteConfig();
-  const { url: target, available } = formState(cfg, linkKey);
+  const form = await getForm(key);
+  if (!form) {
+    return NextResponse.redirect(new URL("/apply", origin), 302);
+  }
 
-  // 방어 3선: DB CHECK를 통과했더라도 리다이렉트 직전에 한 번 더 본다.
-  if (!available || !target || !FORM_URL_PATTERN.test(target)) {
-    const to = linkKey === "senior" ? "/apply?closed=1" : "/guest?closed=1";
-    return NextResponse.redirect(new URL(to, origin), 302);
+  // 방어 2선: DB CHECK를 통과했더라도 리다이렉트 직전에 한 번 더 본다.
+  if (!form.is_open || !form.url || !FORM_URL_PATTERN.test(form.url)) {
+    return NextResponse.redirect(
+      new URL(`/apply?closed=${encodeURIComponent(key)}`, origin),
+      302,
+    );
   }
 
   // ── 계측 ────────────────────────────────────────────────────────────────
@@ -63,11 +67,11 @@ export async function GET(
       if (!svc) return; // SUPABASE_SERVICE_ROLE_KEY 미설정 시 조용히 건너뜀
       await svc
         .from("link_clicks")
-        .insert({ link_key: linkKey, source, ref_host: refHost, device });
+        .insert({ link_key: key, source, ref_host: refHost, device });
     } catch {
       // 계측 실패가 사용자 여정을 막지 않는다.
     }
   });
 
-  return NextResponse.redirect(target, 302);
+  return NextResponse.redirect(form.url, 302);
 }

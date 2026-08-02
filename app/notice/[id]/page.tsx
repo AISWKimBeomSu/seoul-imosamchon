@@ -8,7 +8,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ApplyButton from "@/components/ApplyButton";
 import PopupMount from "@/components/PopupMount";
-import { getSiteConfig } from "@/lib/config";
+import { getForm } from "@/lib/forms.server";
 import { goHref } from "@/lib/links";
 import { tagClass, ddayLabel, formatDate, formatBytes } from "@/lib/notices";
 
@@ -66,12 +66,11 @@ export default async function NoticeDetailPage({
   );
   const dd = ddayLabel(notice.dday);
 
-  // 공지별 폼이 따로 지정돼 있으면 그것을, 없으면 전역 폼을 쓴다(PLAN.md F1-6).
-  // 전역 폼과 같은 주소라면 계측 경유(/api/go)로 보내 클릭을 셀 수 있게 한다.
-  const cfg = await getSiteConfig();
+  // 공지별 폼이 따로 지정돼 있으면 그것을, 없으면 시니어 모집 폼을 쓴다.
+  // 시니어 폼과 같은 주소라면 계측 경유(/api/go)로 보내 클릭을 셀 수 있게 한다.
+  const seniorForm = await getForm("senior");
   const noticeFormUrl: string | null = notice.google_form_url;
-  const useTrackedCta =
-    !noticeFormUrl || noticeFormUrl === cfg.senior_form_url;
+  const useTrackedCta = !noticeFormUrl || noticeFormUrl === seniorForm?.url;
 
   return (
     <>
@@ -103,14 +102,14 @@ export default async function NoticeDetailPage({
                   // 그 링크만 계측·마감 처리를 통째로 우회하므로, 본문(DB)은
                   // 손대지 않고 렌더 시점에 /api/go 로 바꿔 준다.
                   a({ href, children, ...props }) {
-                    const isGlobalForm =
+                    const isSeniorForm =
                       Boolean(href) &&
-                      Boolean(cfg.senior_form_url) &&
-                      href === cfg.senior_form_url;
+                      Boolean(seniorForm?.url) &&
+                      href === seniorForm?.url;
                     return (
                       <a
                         {...props}
-                        href={isGlobalForm ? goHref("senior", "notice") : href}
+                        href={isSeniorForm ? goHref("senior", "notice") : href}
                         target="_blank"
                         rel="noopener noreferrer"
                       >

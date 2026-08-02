@@ -1,6 +1,7 @@
-export type LinkKey = "senior" | "guest";
-
-/** 클릭이 발생한 진입점. /api/go 에서 화이트리스트로 검증된다. */
+/**
+ * 진입점(source)만 코드가 고정하고, 이동 대상(폼 키)은 데이터다.
+ * 키는 /api/go에서 forms 테이블 조회로 검증되므로 화이트리스트 상수가 필요 없다.
+ */
 export type LinkSource =
   | "nav"
   | "hero"
@@ -11,11 +12,10 @@ export type LinkSource =
   | "notice"
   | "about"
   | "guest"
+  | "faq"
   | "footer"
   | "admin"
   | "unknown";
-
-export const LINK_KEYS: LinkKey[] = ["senior", "guest"];
 
 export const LINK_SOURCES: LinkSource[] = [
   "nav",
@@ -27,6 +27,7 @@ export const LINK_SOURCES: LinkSource[] = [
   "notice",
   "about",
   "guest",
+  "faq",
   "footer",
   "admin",
   "unknown",
@@ -39,10 +40,11 @@ export const SOURCE_LABEL: Record<string, string> = {
   popup: "팝업",
   qr: "QR 코드",
   people: "소개 페이지",
-  apply: "신청 안내",
+  apply: "신청 페이지",
   notice: "공지 상세",
   about: "브랜드소개",
   guest: "손님 안내(EN)",
+  faq: "FAQ",
   footer: "하단 메뉴",
   admin: "관리자 확인",
   unknown: "기타",
@@ -51,8 +53,8 @@ export const SOURCE_LABEL: Record<string, string> = {
 /**
  * 모든 외부 이동은 이 헬퍼를 거친다.
  * 구글폼 주소를 <a href>에 직접 박지 않는 이유 — 계측·마감처리·URL 검증이
- * /api/go 한 곳에 모여야 관리가 된다(PLAN.md P2).
+ * /api/go 한 곳에 모여야 관리가 된다.
  */
-export function goHref(key: LinkKey, source: LinkSource): string {
-  return `/api/go/${key}?src=${source}`;
+export function goHref(formKey: string, source: LinkSource): string {
+  return `/api/go/${formKey}?src=${source}`;
 }

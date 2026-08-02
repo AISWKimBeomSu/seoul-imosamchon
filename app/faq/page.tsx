@@ -1,6 +1,6 @@
+import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import ApplyButton from "@/components/ApplyButton";
 import PopupMount from "@/components/PopupMount";
 
 export const dynamic = "force-dynamic";
@@ -48,7 +48,9 @@ export default async function FaqPage() {
           <div className="people-cta" style={{ marginTop: "2rem" }}>
             <h2>궁금증이 풀리셨나요?</h2>
             <p>더 궁금한 점은 신청 후에도 전화·이메일로 도와드립니다.</p>
-            <ApplyButton source="apply" />
+            <Link className="btn btn-primary" href="/apply">
+              신청하러 가기
+            </Link>
           </div>
         </div>
       </main>

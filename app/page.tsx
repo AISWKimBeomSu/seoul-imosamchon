@@ -5,7 +5,6 @@ import { getPeople } from "@/lib/people.server";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import NoticeCard from "@/components/NoticeCard";
-import ApplyButton from "@/components/ApplyButton";
 import PeopleStrip from "@/components/PeopleStrip";
 import PopupMount from "@/components/PopupMount";
 import PreviewBanner from "@/components/PreviewBanner";
@@ -68,8 +67,10 @@ export default async function Home({
               만 60세 이상 시니어와 함께하는 유급 로컬 체험.
             </p>
             <div className="hero-actions">
-              {/* 클릭 1회로 구글폼까지 (v1.1 이전에는 4회였다) */}
-              <ApplyButton source="hero" label="신청하기" />
+              {/* 신청 종류가 시니어·쿠킹클래스·하이킹 셋이라 선택 페이지로 보낸다 */}
+              <Link className="btn btn-primary" href="/apply">
+                신청하기
+              </Link>
               <Link className="link-chev" href="/notice">
                 모집 공고 보기 ›
               </Link>
