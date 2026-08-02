@@ -133,6 +133,7 @@ export default function PopupNotice({
                   <img src={it.imageSrc} alt={it.imageAlt} />
                 </a>
               )}
+              {it.imageSrc && <p className="popup-zoom">포스터를 누르면 크게 보입니다</p>}
 
               {it.subtitle && <p className="popup-eyebrow">{it.subtitle}</p>}
               {multi ? (
@@ -144,15 +145,8 @@ export default function PopupNotice({
               )}
               {it.body && <p className="popup-body">{it.body}</p>}
 
-              {/* 데스크톱에서만 보인다 — 자기 폰 화면의 QR은 자기 폰으로 못 찍는다 */}
-              {it.qrSrc && (
-                <div className="popup-qr">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- 서버 생성 SVG */}
-                  <img src={it.qrSrc} width={200} height={200} alt={`${it.title} QR 코드`} />
-                  <span>휴대폰 카메라로 비춰 주세요</span>
-                </div>
-              )}
-
+              {/* 버튼이 QR보다 위에 온다. 포스터 바로 아래에 있어야 스크롤 없이
+                  눌리고, QR은 어차피 데스크톱 보조 수단이다. */}
               {it.href && (
                 <a
                   className="btn btn-primary popup-cta"
@@ -164,6 +158,15 @@ export default function PopupNotice({
                 >
                   {it.ctaLabel}
                 </a>
+              )}
+
+              {/* 데스크톱에서만 보인다 — 자기 폰 화면의 QR은 자기 폰으로 못 찍는다 */}
+              {it.qrSrc && (
+                <div className="popup-qr">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- 서버 생성 SVG */}
+                  <img src={it.qrSrc} width={200} height={200} alt={`${it.title} QR 코드`} />
+                  <span>휴대폰으로 찍어서 신청하셔도 됩니다</span>
+                </div>
               )}
 
               {/* 모바일 전용 — QR 대신 '보내기'가 답이다 */}

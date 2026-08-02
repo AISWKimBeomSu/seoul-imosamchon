@@ -276,7 +276,7 @@ details[open] .faq-q::after { content: "\2212"; }
 
 /* ---- 팝업 ---- */
 .popup { border: none; padding: 0; background: transparent; max-width: min(92vw, 460px); }
-.popup.popup-multi { max-width: min(96vw, 940px); }
+.popup.popup-multi { max-width: min(96vw, 1020px); }
 .popup::backdrop { background: rgba(28, 26, 23, 0.6); }
 .popup-inner {
   background: #fff; border-radius: 22px; padding: 1.1rem 1.4rem 1.3rem;
@@ -292,12 +292,28 @@ details[open] .faq-q::after { content: "\2212"; }
   border: 1px solid var(--line); border-radius: 18px; padding: 1rem 0.9rem 1.1rem;
   background: #fff;
 }
-.popup-poster { display: block; line-height: 0; width: 100%; border-radius: 14px; overflow: hidden; background: var(--soft); }
-.popup-poster img { width: 100%; height: auto; max-height: 42vh; object-fit: contain; }
-.popup-multi .popup-poster img { max-height: 34vh; }
+/* 포스터가 주인공이다. 제목·설명은 포스터가 이미 말하고 있으니 보조로 둔다. */
+.popup-poster {
+  display: block; line-height: 0; width: 100%; border-radius: 14px;
+  overflow: hidden; background: var(--soft); border: 1px solid var(--line);
+  transition: transform 0.16s, box-shadow 0.16s;
+}
+.popup-poster:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+/* 노트북(800px 높이)에서도 버튼이 스크롤 없이 보이도록 vh와 px 상한을 함께 건다.
+   vh만 쓰면 화면이 낮을 때 버튼이 접히고, px만 쓰면 큰 화면에서 포스터가 작아진다. */
+.popup-poster img { width: 100%; height: auto; max-height: min(56vh, 620px); object-fit: contain; }
+.popup-multi .popup-poster img { max-height: min(40vh, 380px); }
+.popup-zoom { color: var(--sub); font-size: 0.8rem; margin-top: -0.1rem; }
+.popup-multi .popup-body {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; margin-bottom: 0.6rem; font-size: 0.96rem;
+}
 
 @media (min-width: 768px) {
   .popup-multi .popup-items { grid-template-columns: repeat(2, 1fr); }
+  .popup-multi .popup-qr img { width: 132px; height: 132px; }
+  .popup-multi .popup-qr { margin: 0.4rem 0 0.2rem; }
+  .popup-multi .popup-qr span { font-size: 0.8rem; }
 }
 /* 닫기 버튼: 56×56 이상 + 아이콘 단독 금지 (WCAG 2.5.8 초과 달성) */
 .popup-close {

@@ -51,8 +51,14 @@ export function isFormAvailable(form: Pick<ApplyForm, "is_open" | "url">) {
   return Boolean(form.is_open && form.url);
 }
 
+/**
+ * 포스터 주소.
+ * '/'로 시작하면 저장소에 함께 들어 있는 파일(public/), 아니면 관리자가 올린
+ * Supabase Storage 경로다.
+ */
 export function posterUrl(path: string | null): string | null {
   if (!path) return null;
+  if (path.startsWith("/")) return path;
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/files/${path}`;
 }
 

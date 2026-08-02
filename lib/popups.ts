@@ -28,8 +28,14 @@ export type Popup = {
 export const POPUP_COLS =
   "id, title, subtitle, body, link_kind, form_key, notice_id, cta_label, show_qr, image_path, image_alt, scope, starts_at, ends_at, sort, is_published";
 
+/**
+ * 포스터 주소.
+ * '/'로 시작하면 저장소에 함께 들어 있는 파일(public/), 아니면 관리자가 올린
+ * Supabase Storage 경로다. 두 출처를 같은 컬럼으로 다루기 위한 규칙이다.
+ */
 export function popupImageUrl(path: string | null): string | null {
   if (!path) return null;
+  if (path.startsWith("/")) return path;
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/files/${path}`;
 }
 
