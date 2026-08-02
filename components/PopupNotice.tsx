@@ -52,12 +52,26 @@ function remember(key: string, mode: "today" | "forever") {
   }
 }
 
+export type PopupLabels = {
+  heading: string;
+  close: string;
+  zoom: string;
+  scanQr: string;
+  copy: string;
+  copied: string;
+  copyFail: string;
+  hideToday: string;
+  hideForever: string;
+};
+
 export default function PopupNotice({
   items,
   preview = false,
+  labels,
 }: {
   items: PopupItem[];
   preview?: boolean;
+  labels: PopupLabels;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const [mounted, setMounted] = useState(false);
@@ -85,6 +99,13 @@ export default function PopupNotice({
     };
   }, [key, preview]);
 
+  /**
+   * 기본은 '이번만 닫기'다 — 홈에 다시 오면 팝업이 다시 뜬다.
+   * 그냥 닫기·ESC·배경클릭·CTA 클릭이 모두 여기에 해당한다.
+   *
+   * 아래 두 버튼('오늘 하루'·'다시 보지 않기')을 눌렀을 때만 기억한다.
+   * 매번 뜨는 팝업에 빠져나갈 문이 없으면 그때부터는 광고가 된다.
+   */
   function close(mode: "today" | "forever" | "once") {
     if (mode !== "once" && !preview) remember(key, mode);
     ref.current?.close(); // 닫으면 브라우저가 원래 포커스를 복원한다
@@ -109,12 +130,12 @@ export default function PopupNotice({
     >
       <div className="popup-inner">
         <button type="button" className="popup-close" onClick={() => close("once")}>
-          <span aria-hidden="true">✕</span> 닫기
+          <span aria-hidden="true">✕</span> {labels.close}
         </button>
 
         {multi && (
           <h2 id={headingId} className="popup-heading">
-            지금 신청받고 있어요
+            {labels.heading}
           </h2>
         )}
 
@@ -133,7 +154,7 @@ export default function PopupNotice({
                   <img src={it.imageSrc} alt={it.imageAlt} />
                 </a>
               )}
-              {it.imageSrc && <p className="popup-zoom">포스터를 누르면 크게 보입니다</p>}
+              {it.imageSrc && <p className="popup-zoom">{labels.zoom}</p>}
 
               {it.subtitle && <p className="popup-eyebrow">{it.subtitle}</p>}
               {multi ? (
@@ -154,7 +175,7 @@ export default function PopupNotice({
                   {...(it.external
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
-                  onClick={() => close("today")}
+                  onClick={() => close("once")}
                 >
                   {it.ctaLabel}
                 </a>
@@ -165,7 +186,7 @@ export default function PopupNotice({
                 <div className="popup-qr">
                   {/* eslint-disable-next-line @next/next/no-img-element -- 서버 생성 SVG */}
                   <img src={it.qrSrc} width={200} height={200} alt={`${it.title} QR 코드`} />
-                  <span>휴대폰으로 찍어서 신청하셔도 됩니다</span>
+                  <span>{labels.scanQr}</span>
                 </div>
               )}
 
@@ -174,7 +195,9 @@ export default function PopupNotice({
                 <div className="popup-copy">
                   <CopyLink
                     value={it.shareUrl}
-                    label="링크 복사해서 보내기"
+                    label={labels.copy}
+                    copiedLabel={labels.copied}
+                    failLabel={labels.copyFail}
                     className="btn btn-ghost popup-cta"
                   />
                 </div>
@@ -185,10 +208,10 @@ export default function PopupNotice({
 
         <div className="popup-foot">
           <button type="button" className="popup-link" onClick={() => close("today")}>
-            오늘 하루 보지 않기
+            {labels.hideToday}
           </button>
           <button type="button" className="popup-link" onClick={() => close("forever")}>
-            다시 보지 않기
+            {labels.hideForever}
           </button>
         </div>
       </div>

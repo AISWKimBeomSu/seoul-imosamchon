@@ -23,10 +23,15 @@ export type Popup = {
   ends_at: string | null;
   sort: number;
   is_published: boolean;
+  // 비어 있으면 한국어로 떨어진다 (lib/i18n.ts의 pick)
+  title_en: string;
+  subtitle_en: string;
+  body_en: string;
+  cta_label_en: string;
 };
 
 export const POPUP_COLS =
-  "id, title, subtitle, body, link_kind, form_key, notice_id, cta_label, show_qr, image_path, image_alt, scope, starts_at, ends_at, sort, is_published";
+  "id, title, subtitle, body, link_kind, form_key, notice_id, cta_label, show_qr, image_path, image_alt, scope, starts_at, ends_at, sort, is_published, title_en, subtitle_en, body_en, cta_label_en";
 
 /**
  * 포스터 주소.

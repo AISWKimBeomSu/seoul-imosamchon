@@ -24,6 +24,12 @@ export type ApplyForm = {
   poster_alt: string;
   accent: FormAccent;
   sort: number;
+  // 비어 있으면 한국어로 떨어진다 (lib/i18n.ts의 pick)
+  title_en: string;
+  subtitle_en: string;
+  description_en: string;
+  cta_label_en: string;
+  closed_note_en: string;
 };
 
 export type AdminForm = ApplyForm & {
@@ -31,7 +37,7 @@ export type AdminForm = ApplyForm & {
 };
 
 export const FORM_PUBLIC_COLS =
-  "id, key, title, subtitle, description, url, is_open, cta_label, closed_note, audience, poster_path, poster_alt, accent, sort";
+  "id, key, title, subtitle, description, url, is_open, cta_label, closed_note, audience, poster_path, poster_alt, accent, sort, title_en, subtitle_en, description_en, cta_label_en, closed_note_en";
 
 export const FORM_ADMIN_COLS = `${FORM_PUBLIC_COLS}, is_published`;
 

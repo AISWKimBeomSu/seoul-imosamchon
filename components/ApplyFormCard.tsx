@@ -3,10 +3,12 @@ import { qrVersion } from "@/lib/qr";
 import { getSiteOrigin } from "@/lib/origin";
 import { goHref } from "@/lib/links";
 import { isFormAvailable, posterUrl, type ApplyForm } from "@/lib/forms";
+import { getT } from "@/lib/locale.server";
+import { pick } from "@/lib/i18n";
 import CopyLink from "@/components/CopyLink";
 
 /**
- * /apply의 신청 카드 한 장. 포스터 → 설명 → QR(데스크톱) → 큰 버튼 순.
+ * /apply의 신청 카드 한 장. 포스터 → 설명 → 큰 버튼 → QR(데스크톱) 순.
  *
  * QR을 데스크톱에서만 보여주는 이유: 자기 폰 화면의 QR은 자기 폰으로 스캔할 수
  * 없다. 모바일에는 대신 큰 버튼과 '링크 복사'가 나온다.
@@ -18,10 +20,17 @@ export default async function ApplyFormCard({
   form: ApplyForm;
   highlight?: boolean;
 }) {
+  const [{ t, locale }, site] = await Promise.all([getT(), getSiteOrigin()]);
+
   const available = isFormAvailable(form);
   const poster = posterUrl(form.poster_path);
-  const site = await getSiteOrigin();
   const href = goHref(form.key, "apply");
+
+  const title = pick(locale, form.title, form.title_en);
+  const subtitle = pick(locale, form.subtitle, form.subtitle_en);
+  const description = pick(locale, form.description, form.description_en);
+  const ctaLabel = pick(locale, form.cta_label, form.cta_label_en);
+  const closedNote = pick(locale, form.closed_note, form.closed_note_en);
 
   return (
     <article
@@ -41,37 +50,39 @@ export default async function ApplyFormCard({
       )}
 
       <div className="fcard-body">
-        {form.subtitle && <p className="fcard-eyebrow">{form.subtitle}</p>}
-        <h2>{form.title}</h2>
-        {form.description && <p className="fcard-desc">{form.description}</p>}
+        {subtitle && <p className="fcard-eyebrow">{subtitle}</p>}
+        <h2>{title}</h2>
+        {description && <p className="fcard-desc">{description}</p>}
 
         {available ? (
           <>
-            <div className="fcard-qr">
-              {/* eslint-disable-next-line @next/next/no-img-element -- 서버 생성 SVG */}
-              <img
-                src={`/api/qr/${form.key}?v=${qrVersion(form.url)}`}
-                width={190}
-                height={190}
-                alt={`${form.title} QR 코드`}
-              />
-              <span>휴대폰 카메라로 비춰 주세요</span>
-            </div>
-
             <a
               className="btn btn-primary fcard-cta"
               href={href}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {form.cta_label}
-              <span className="sr-only"> (새 창에서 열립니다)</span>
+              {ctaLabel}
+              <span className="sr-only">{t("common.newWindow")}</span>
             </a>
+
+            <div className="fcard-qr">
+              {/* eslint-disable-next-line @next/next/no-img-element -- 서버 생성 SVG */}
+              <img
+                src={`/api/qr/${form.key}?v=${qrVersion(form.url)}`}
+                width={170}
+                height={170}
+                alt={`${title} QR`}
+              />
+              <span>{t("common.scanQr")}</span>
+            </div>
 
             <div className="fcard-copy">
               <CopyLink
                 value={`${site}${href}`}
-                label="링크 복사해서 보내기"
+                label={t("common.copyLink")}
+                copiedLabel={t("common.copied")}
+                failLabel={t("common.copyFail")}
                 className="btn btn-ghost fcard-cta"
               />
             </div>
@@ -79,9 +90,9 @@ export default async function ApplyFormCard({
         ) : (
           <div className="fcard-closed">
             <span className="btn is-closed" aria-disabled="true">
-              접수 준비 중
+              {t("common.preparing")}
             </span>
-            <p>{form.closed_note}</p>
+            <p>{closedNote}</p>
           </div>
         )}
       </div>

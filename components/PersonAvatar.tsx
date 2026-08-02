@@ -1,12 +1,13 @@
 import Image from "next/image";
 import { photoUrl, type Person } from "@/lib/people";
+import { getT } from "@/lib/locale.server";
 
 /**
  * 사진이 없어도 카드가 완성돼 보이게 한다.
  * 시니어 사진 확보는 늦어지기 마련인데, 그때 페이지가 비어 보이면
  * "준비 안 된 브랜드"로 읽힌다. 이니셜 아바타가 그 구멍을 메운다.
  */
-export default function PersonAvatar({
+export default async function PersonAvatar({
   person,
   size = 132,
 }: {
@@ -16,12 +17,13 @@ export default function PersonAvatar({
   const src = photoUrl(person.photo_path);
 
   if (!src) {
+    const { t } = await getT();
     return (
       <div
         className="pavatar pavatar-fallback"
         style={{ width: size, height: size }}
         role="img"
-        aria-label={`${person.name} 님 (사진 준비 중)`}
+        aria-label={`${person.name} (${t("people.photoPending")})`}
       >
         <span aria-hidden="true">{person.name.trim().charAt(0)}</span>
       </div>

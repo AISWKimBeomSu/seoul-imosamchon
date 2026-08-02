@@ -211,14 +211,19 @@ details[open] .faq-q::after { content: "\2212"; }
   box-shadow: none; cursor: default; pointer-events: none;
 }
 
-/* 상단 내비 EN 링크 */
-.nav-en {
-  font-size: 0.82rem; font-weight: 800; letter-spacing: 0.04em;
-  color: var(--point) !important; border: 1.5px solid var(--line2);
-  border-radius: 999px; padding: 0.4rem 0.7rem !important; line-height: 1;
-  display: inline-flex; align-items: center; min-height: 34px;
+/* 언어 토글 — 지금 보는 페이지를 그대로 두고 언어만 바꾼다 */
+.lang-toggle {
+  display: inline-flex; border: 1.5px solid var(--line2); border-radius: 999px;
+  overflow: hidden; background: #fff; margin-left: 0.2rem;
 }
-.nav-en:hover { background: var(--point-soft); border-color: var(--point); }
+.lang-toggle button {
+  font-family: var(--font-sans); font-size: 0.8rem; font-weight: 800;
+  letter-spacing: 0.04em; color: var(--sub); background: none; border: none;
+  padding: 0 0.65rem; min-height: 38px; cursor: pointer; line-height: 1;
+}
+.lang-toggle button:hover { color: var(--point); background: var(--soft); }
+.lang-toggle button.is-on { background: var(--point); color: #fff; }
+.lang-toggle[data-pending="1"] { opacity: 0.6; }
 
 /* ---- QR 패널 ---- */
 .qr-panel {
@@ -427,6 +432,14 @@ details[open] .faq-q::after { content: "\2212"; }
 .admin-bar .fill { height: 100%; background: var(--point); border-radius: 999px; }
 .admin-bar .n { font-weight: 800; min-width: 2.5em; text-align: right; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.en-block {
+  border: 1px dashed var(--line2); border-radius: 14px;
+  padding: 1rem 1.1rem 0.2rem; margin: 0 0 1.1rem; background: var(--soft);
+}
+.en-block legend {
+  font-size: 0.82rem; font-weight: 800; color: var(--sub);
+  padding: 0 0.45rem; background: #fff; border-radius: 8px;
+}
 .badge { font-size: 0.74rem; font-weight: 800; padding: 0.24rem 0.55rem; border-radius: 8px; }
 .badge.live { background: var(--brand); color: var(--brand-ink); }
 .badge.soon { background: var(--gold-soft); color: var(--gold-ink); }

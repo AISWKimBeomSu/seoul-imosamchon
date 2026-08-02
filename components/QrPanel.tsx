@@ -2,6 +2,8 @@ import { getForm } from "@/lib/forms.server";
 import { qrVersion } from "@/lib/qr";
 import { getSiteOrigin } from "@/lib/origin";
 import { goHref } from "@/lib/links";
+import { getT } from "@/lib/locale.server";
+import { pick } from "@/lib/i18n";
 import CopyLink from "@/components/CopyLink";
 
 /**
@@ -12,39 +14,43 @@ import CopyLink from "@/components/CopyLink";
  */
 export default async function QrPanel({
   formKey = "senior",
-  caption = "휴대폰 카메라로 비추면 신청 화면이 열립니다",
+  caption,
   size = 180,
 }: {
   formKey?: string;
   caption?: string;
   size?: number;
 }) {
-  const form = await getForm(formKey);
+  const [form, { t, locale }, site] = await Promise.all([
+    getForm(formKey),
+    getT(),
+    getSiteOrigin(),
+  ]);
   if (!form?.url) return null;
 
+  const title = pick(locale, form.title, form.title_en);
   // 폼 URL이 바뀌면 v가 바뀌어 캐시된 옛 QR이 자동으로 버려진다.
   const src = `/api/qr/${form.key}?v=${qrVersion(form.url)}`;
-  const site = await getSiteOrigin();
 
   return (
     <figure className="qr-panel">
       {/* eslint-disable-next-line @next/next/no-img-element -- 서버 생성 SVG. 벡터라 최적화 이득 없음 */}
-      <img
-        src={src}
-        width={size}
-        height={size}
-        alt={`${form.title} 페이지로 이동하는 QR 코드입니다. 아래 버튼으로도 신청하실 수 있습니다.`}
-      />
-      <figcaption>{caption}</figcaption>
+      <img src={src} width={size} height={size} alt={`${title} QR`} />
+      <figcaption>{caption ?? t("common.scanQr")}</figcaption>
       <div className="qr-actions">
         <a
           className="btn btn-ghost nav-cta"
           href={src}
-          download={`서울이모삼촌-${form.key}-QR.svg`}
+          download={`seoul-imosamchon-${form.key}-QR.svg`}
         >
-          QR 이미지 저장
+          {t("common.saveQr")}
         </a>
-        <CopyLink value={`${site}${goHref(form.key, "qr")}`} />
+        <CopyLink
+          value={`${site}${goHref(form.key, "qr")}`}
+          label={t("common.copyLink")}
+          copiedLabel={t("common.copied")}
+          failLabel={t("common.copyFail")}
+        />
       </div>
     </figure>
   );

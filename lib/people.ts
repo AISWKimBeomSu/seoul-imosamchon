@@ -18,6 +18,12 @@ export type Person = {
   photo_alt: string;
   tags: string[];
   sort: number;
+  // 비어 있으면 한국어로 떨어진다 (lib/i18n.ts의 pick)
+  role_en: string;
+  region_en: string;
+  tagline_en: string;
+  bio_en: string;
+  quote_en: string;
 };
 
 export type AdminPerson = Person & {
@@ -28,7 +34,7 @@ export type AdminPerson = Person & {
 };
 
 export const PERSON_PUBLIC_COLS =
-  "id, kind, name, role, region, tagline, bio, quote, photo_path, photo_alt, tags, sort";
+  "id, kind, name, role, region, tagline, bio, quote, photo_path, photo_alt, tags, sort, role_en, region_en, tagline_en, bio_en, quote_en";
 
 export const PERSON_ADMIN_COLS = `${PERSON_PUBLIC_COLS}, is_published, consent_at, consent_memo, created_at`;
 

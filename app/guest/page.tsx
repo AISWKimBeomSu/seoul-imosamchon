@@ -7,64 +7,47 @@ import { getSiteConfig } from "@/lib/config";
 import { getFormsFor } from "@/lib/forms.server";
 import { isFormAvailable } from "@/lib/forms";
 import { getPeople } from "@/lib/people.server";
+import { getT, getLocale } from "@/lib/locale.server";
+import { pick } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Home Cooking with Seoul Aunts and Uncles",
-  description:
-    "Cook a real Korean home meal with a Seoul local in their sixties. Traditional market shopping, a home kitchen, and stories you cannot get from a restaurant.",
-  alternates: { canonical: "/guest" },
-  openGraph: {
-    title: "Seoul Imo Samchon — Home Cooking with Seoul Locals",
-    description:
-      "Market shopping, home cooking, and real stories with Seoul residents in their sixties.",
-    type: "website",
-    locale: "en_US",
-  },
-};
-
-const STEPS = [
-  {
-    n: "1",
-    title: "Meet at the market",
-    body: "Start at Mangwon Market with your host. Taste as you go, and pick up what you will cook together.",
-  },
-  {
-    n: "2",
-    title: "Cook in a real home kitchen",
-    body: "Not a studio. An actual Seoul kitchen, with the pots and the recipes a family has used for forty years.",
-  },
-  {
-    n: "3",
-    title: "Eat, and hear the stories",
-    body: "Sit down to the meal you made. Your host has lived in this neighbourhood longer than most guidebooks have existed.",
-  },
-];
+export async function generateMetadata() {
+  const en = (await getLocale()) === "en";
+  return {
+    title: en ? "For guests" : "손님 안내",
+    description: en ? "Book a cooking class or a neighbourhood walk with a Seoul local." : "외국인 손님을 위한 안내와 예약.",
+  };
+}
 
 export default async function GuestPage({
   searchParams,
 }: {
   searchParams: Promise<{ closed?: string }>;
 }) {
-  const [{ closed }, cfg, hosts, guestForms] = await Promise.all([
+  const [{ closed }, cfg, hosts, guestForms, { t, locale }] = await Promise.all([
     searchParams,
     getSiteConfig(),
     getPeople("senior"),
     getFormsFor("guest"), // 쿠킹클래스 · 하이킹
+    getT(),
   ]);
   const openForms = guestForms.filter(isFormAvailable);
+
+  const steps = [
+    { n: "1", t: t("guest.step1t"), d: t("guest.step1d") },
+    { n: "2", t: t("guest.step2t"), d: t("guest.step2d") },
+    { n: "3", t: t("guest.step3t"), d: t("guest.step3d") },
+  ];
 
   return (
     <>
       <SiteHeader />
-      {/* 루트 레이아웃은 lang="ko"다. 이 서브트리만 영어로 선언해
-          스크린리더가 영어 발음으로 읽도록 한다 (WCAG 3.1.2) */}
-      <main lang="en">
+      <main>
         <section className="guest-hero">
           <div className="wrap">
             <div className="eyebrow" style={{ justifyContent: "center" }}>
-              Seoul Imo Samchon
+              {t("guest.eyebrow")}
             </div>
             <h1
               style={{
@@ -72,31 +55,30 @@ export default async function GuestPage({
                 fontWeight: 800,
                 lineHeight: 1.25,
                 margin: "0.3rem auto 0.8rem",
-                maxWidth: "18ch",
+                maxWidth: "20ch",
               }}
             >
-              Cook a real Korean home meal with a Seoul local
+              {t("guest.title")}
             </h1>
             <p
               style={{
                 color: "var(--sub)",
                 fontSize: "1.12rem",
-                maxWidth: "46ch",
+                maxWidth: "48ch",
                 margin: "0 auto 1.6rem",
               }}
             >
-              Your host is in their sixties and has shopped at the same market for
-              thirty years. A kitchen can be rented. That cannot.
+              {t("guest.lead")}
             </p>
 
             {closed && (
               <div
                 className="alert err"
                 role="status"
-                style={{ maxWidth: 520, margin: "0 auto 1.2rem" }}
+                style={{ maxWidth: 540, margin: "0 auto 1.2rem" }}
               >
-                Bookings are not open right now. Please write to us at{" "}
-                <a href={`mailto:${cfg.contact_email}`}>{cfg.contact_email}</a>.
+                {t("guest.closedNow")}{" "}
+                <a href={`mailto:${cfg.contact_email}`}>{cfg.contact_email}</a>
               </div>
             )}
 
@@ -109,28 +91,23 @@ export default async function GuestPage({
                   justifyContent: "center",
                 }}
               >
-                {openForms.map((f) => (
+                {openForms.map((f, i) => (
                   <ApplyButton
                     key={f.key}
                     formKey={f.key}
                     source="guest"
-                    className={
-                      f.key === openForms[0].key
-                        ? "btn btn-primary"
-                        : "btn btn-ghost"
-                    }
+                    className={i === 0 ? "btn btn-primary" : "btn btn-ghost"}
                   />
                 ))}
               </div>
             ) : (
               <div style={{ color: "var(--sub)" }}>
                 <p style={{ marginBottom: "0.6rem" }}>
-                  <b>Bookings open soon.</b>
+                  <b>{t("guest.soon")}</b>
                 </p>
                 <p>
-                  Write to us at{" "}
-                  <a href={`mailto:${cfg.contact_email}`}>{cfg.contact_email}</a> and
-                  we will let you know first.
+                  {t("guest.soonSub")}{" "}
+                  <a href={`mailto:${cfg.contact_email}`}>{cfg.contact_email}</a>
                 </p>
               </div>
             )}
@@ -139,7 +116,7 @@ export default async function GuestPage({
 
         <section className="section">
           <div className="wrap">
-            <div className="eyebrow">What you will do</div>
+            <div className="eyebrow">{t("guest.stepsEyebrow")}</div>
             <h2
               style={{
                 fontSize: "clamp(1.35rem,2.6vw,1.9rem)",
@@ -147,24 +124,20 @@ export default async function GuestPage({
                 margin: "0.2rem 0 1.3rem",
               }}
             >
-              Three hours, one neighbourhood
+              {t("guest.stepsTitle")}
             </h2>
             <div className="guest-cards">
-              {STEPS.map((s) => (
+              {steps.map((s) => (
                 <div className="card" key={s.n}>
                   <div className="guest-step" aria-hidden="true">
                     {s.n}
                   </div>
                   <h3
-                    style={{
-                      fontSize: "1.15rem",
-                      fontWeight: 800,
-                      marginBottom: "0.4rem",
-                    }}
+                    style={{ fontSize: "1.15rem", fontWeight: 800, marginBottom: "0.4rem" }}
                   >
-                    {s.title}
+                    {s.t}
                   </h3>
-                  <p style={{ color: "#4b453d" }}>{s.body}</p>
+                  <p style={{ color: "#4b453d" }}>{s.d}</p>
                 </div>
               ))}
             </div>
@@ -174,7 +147,7 @@ export default async function GuestPage({
         {hosts.length > 0 && (
           <section className="section soft">
             <div className="wrap">
-              <div className="eyebrow">Your hosts</div>
+              <div className="eyebrow">{t("guest.hostsEyebrow")}</div>
               <h2
                 style={{
                   fontSize: "clamp(1.35rem,2.6vw,1.9rem)",
@@ -182,15 +155,21 @@ export default async function GuestPage({
                   margin: "0.2rem 0 1.3rem",
                 }}
               >
-                Real people, not a company
+                {t("guest.hostsTitle")}
               </h2>
               <div className="people-grid team">
                 {hosts.slice(0, 3).map((p) => (
                   <article className="pcard team" key={p.id}>
                     <PersonAvatar person={p} size={96} />
                     <h3>{p.name}</h3>
-                    {p.region && <p className="pcard-role">{p.region}</p>}
-                    {p.tagline && <p className="pcard-tagline">{p.tagline}</p>}
+                    {pick(locale, p.region, p.region_en) && (
+                      <p className="pcard-role">{pick(locale, p.region, p.region_en)}</p>
+                    )}
+                    {pick(locale, p.tagline, p.tagline_en) && (
+                      <p className="pcard-tagline">
+                        {pick(locale, p.tagline, p.tagline_en)}
+                      </p>
+                    )}
                   </article>
                 ))}
               </div>
@@ -201,11 +180,8 @@ export default async function GuestPage({
         <section className="section">
           <div className="wrap">
             <div className="people-cta">
-              <h2>Ready to cook?</h2>
-              <p>
-                No Korean needed. A younger team member joins to help with
-                translation.
-              </p>
+              <h2>{t("guest.ctaTitle")}</h2>
+              <p>{t("guest.ctaSub")}</p>
               {openForms.length > 0 ? (
                 <div
                   style={{
@@ -221,7 +197,7 @@ export default async function GuestPage({
                 </div>
               ) : (
                 <a className="btn btn-ghost" href={`mailto:${cfg.contact_email}`}>
-                  Email us
+                  {t("guest.emailUs")}
                 </a>
               )}
             </div>

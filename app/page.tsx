@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { getPeople } from "@/lib/people.server";
+import { getT } from "@/lib/locale.server";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import NoticeCard from "@/components/NoticeCard";
@@ -33,9 +34,10 @@ export default async function Home({
   const isPreview = await isPreviewMode(preview);
 
   // 병렬 실행 — 직렬로 쌓이면 그만큼 LCP가 밀린다
-  const [notices, seniors] = await Promise.all([
+  const [notices, seniors, { t, locale }] = await Promise.all([
     getLatestNotices(),
     getPeople("senior", { includeUnpublished: isPreview }),
+    getT(),
   ]);
 
   return (
@@ -56,23 +58,32 @@ export default async function Home({
               priority
             />
             <div className="hero-eyebrow">
-              SEOUL 50<span>+</span> 선정사업
+              SEOUL 50<span>+</span>
+              {locale === "en" ? " SELECTED PROJECT" : " 선정사업"}
             </div>
             <h1 className="hero-h1">
-              여러분만이 알고 있는
-              <br />
-              서울의 <span className="kw">‘로컬함’</span>을 알려주세요
+              {locale === "en" ? (
+                <>
+                  Show us the Seoul
+                  <br />
+                  <span className="kw">only you</span> know
+                </>
+              ) : (
+                <>
+                  여러분만이 알고 있는
+                  <br />
+                  서울의 <span className="kw">‘로컬함’</span>을 알려주세요
+                </>
+              )}
             </h1>
-            <p className="hero-sub">
-              만 60세 이상 시니어와 함께하는 유급 로컬 체험.
-            </p>
+            <p className="hero-sub">{t("home.sub")}</p>
             <div className="hero-actions">
-              {/* 신청 종류가 시니어·쿠킹클래스·하이킹 셋이라 선택 페이지로 보낸다 */}
+              {/* 신청 종류가 셋이라 폼 직행 대신 선택 페이지로 보낸다 */}
               <Link className="btn btn-primary" href="/apply">
-                신청하기
+                {t("nav.apply")}
               </Link>
               <Link className="link-chev" href="/notice">
-                모집 공고 보기 ›
+                {t("home.viewNotice")}
               </Link>
             </div>
           </div>
@@ -82,14 +93,12 @@ export default async function Home({
           <div className="wrap">
             <div className="sec-top">
               <div>
-                <div className="eyebrow">공지사항</div>
-                <h2>최신 소식</h2>
-                <p className="sec-sub">
-                  모집 공고와 안내를 이곳에 올립니다. 카드를 누르면 상세 페이지로 이동해요.
-                </p>
+                <div className="eyebrow">{t("home.noticeEyebrow")}</div>
+                <h2>{t("home.noticeTitle")}</h2>
+                <p className="sec-sub">{t("home.noticeSub")}</p>
               </div>
               <Link className="more" href="/notice">
-                공지사항 전체보기 →
+                {t("home.noticeAll")}
               </Link>
             </div>
             {notices.length > 0 ? (
@@ -99,7 +108,7 @@ export default async function Home({
                 ))}
               </div>
             ) : (
-              <div className="empty">첫 공지가 곧 올라올 예정이에요.</div>
+              <div className="empty">{t("home.noticeEmpty")}</div>
             )}
           </div>
         </section>

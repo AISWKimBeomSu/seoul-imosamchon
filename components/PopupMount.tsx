@@ -5,11 +5,14 @@ import { isFormAvailable } from "@/lib/forms";
 import { qrVersion } from "@/lib/qr";
 import { getSiteOrigin } from "@/lib/origin";
 import { goHref } from "@/lib/links";
+import { getT } from "@/lib/locale.server";
+import { pick } from "@/lib/i18n";
 import PopupNotice, { type PopupItem } from "@/components/PopupNotice";
 
 /**
  * 서버에서 활성 팝업을 찾아 클라이언트 컴포넌트에 넘긴다.
  * QR/포스터는 여기서 '주소만' 만들어 전달하므로 생성 코드는 클라이언트 번들에 없다.
+ * 문구도 여기서 번역해 넘긴다 — 사전이 클라이언트로 가지 않는다.
  *
  * 루트 레이아웃이 아니라 페이지별로 마운트한다 —
  * 그래야 /admin에 뜨지 않고, scope(홈전용/전체) 처리가 가능하다.
@@ -24,7 +27,7 @@ export default async function PopupMount({
   const popups = await getActivePopups(page, { preview });
   if (popups.length === 0) return null;
 
-  const site = await getSiteOrigin();
+  const [{ t, locale }, site] = await Promise.all([getT(), getSiteOrigin()]);
   const items: PopupItem[] = [];
 
   for (const p of popups) {
@@ -46,10 +49,10 @@ export default async function PopupMount({
 
     items.push({
       id: p.id,
-      title: p.title,
-      subtitle: p.subtitle,
-      body: p.body,
-      ctaLabel: p.cta_label,
+      title: pick(locale, p.title, p.title_en),
+      subtitle: pick(locale, p.subtitle, p.subtitle_en),
+      body: pick(locale, p.body, p.body_en),
+      ctaLabel: pick(locale, p.cta_label, p.cta_label_en),
       href,
       external,
       qrSrc,
@@ -61,5 +64,27 @@ export default async function PopupMount({
 
   if (items.length === 0) return null;
 
-  return <PopupNotice items={items} preview={preview} />;
+  return (
+    <PopupNotice
+      items={items}
+      preview={preview}
+      labels={{
+        heading: locale === "en" ? "Open for applications" : "지금 신청받고 있어요",
+        close: locale === "en" ? "Close" : "닫기",
+        zoom:
+          locale === "en"
+            ? "Tap the poster to enlarge"
+            : "포스터를 누르면 크게 보입니다",
+        scanQr:
+          locale === "en"
+            ? "Or scan with your phone"
+            : "휴대폰으로 찍어서 신청하셔도 됩니다",
+        copy: t("common.copyLink"),
+        copied: t("common.copied"),
+        copyFail: t("common.copyFail"),
+        hideToday: locale === "en" ? "Hide for today" : "오늘 하루 보지 않기",
+        hideForever: locale === "en" ? "Do not show again" : "다시 보지 않기",
+      }}
+    />
+  );
 }

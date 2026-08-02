@@ -101,6 +101,11 @@ export default function SettingsForm({ form }: { form: AdminForm }) {
           poster_alt: posterPath ? d.poster_alt.trim() : "",
           sort: d.sort,
           is_published: d.is_published,
+          title_en: d.title_en.trim(),
+          subtitle_en: d.subtitle_en.trim(),
+          description_en: d.description_en.trim(),
+          cta_label_en: d.cta_label_en.trim(),
+          closed_note_en: d.closed_note_en.trim(),
         })
         .eq("id", d.id);
       if (error) throw new Error(error.message);
@@ -211,6 +216,39 @@ export default function SettingsForm({ form }: { form: AdminForm }) {
           />
         </div>
       </div>
+
+      <fieldset className="en-block">
+        <legend>English (비우면 한국어가 그대로 보입니다)</legend>
+        <div className="field-row">
+          <div className="field">
+            <label htmlFor={`title-en-${d.key}`}>Title</label>
+            <input id={`title-en-${d.key}`} className="input" lang="en"
+              value={d.title_en} onChange={(e) => set("title_en", e.target.value)} />
+          </div>
+          <div className="field">
+            <label htmlFor={`sub-en-${d.key}`}>Subtitle</label>
+            <input id={`sub-en-${d.key}`} className="input" lang="en"
+              value={d.subtitle_en} onChange={(e) => set("subtitle_en", e.target.value)} />
+          </div>
+        </div>
+        <div className="field">
+          <label htmlFor={`desc-en-${d.key}`}>Description</label>
+          <textarea id={`desc-en-${d.key}`} className="textarea" lang="en" style={{ minHeight: 70 }}
+            value={d.description_en} onChange={(e) => set("description_en", e.target.value)} />
+        </div>
+        <div className="field-row">
+          <div className="field">
+            <label htmlFor={`cta-en-${d.key}`}>Button label</label>
+            <input id={`cta-en-${d.key}`} className="input" lang="en"
+              value={d.cta_label_en} onChange={(e) => set("cta_label_en", e.target.value)} />
+          </div>
+          <div className="field">
+            <label htmlFor={`closed-en-${d.key}`}>Closed note</label>
+            <input id={`closed-en-${d.key}`} className="input" lang="en"
+              value={d.closed_note_en} onChange={(e) => set("closed_note_en", e.target.value)} />
+          </div>
+        </div>
+      </fieldset>
 
       <div className="field">
         <label htmlFor={`desc-${d.key}`}>설명</label>

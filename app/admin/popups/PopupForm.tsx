@@ -40,6 +40,10 @@ type Draft = {
   cta_label: string;
   show_qr: boolean;
   image_alt: string;
+  title_en: string;
+  subtitle_en: string;
+  body_en: string;
+  cta_label_en: string;
   scope: PopupScope;
   starts_at: string;
   ends_at: string;
@@ -58,6 +62,10 @@ function initialDraft(p?: Popup): Draft {
     cta_label: p?.cta_label ?? "신청하러 가기",
     show_qr: p?.show_qr ?? true,
     image_alt: p?.image_alt ?? "",
+    title_en: p?.title_en ?? "",
+    subtitle_en: p?.subtitle_en ?? "",
+    body_en: p?.body_en ?? "",
+    cta_label_en: p?.cta_label_en ?? "",
     scope: p?.scope ?? "home",
     starts_at: toLocalInput(p?.starts_at ?? new Date().toISOString()),
     ends_at: toLocalInput(p?.ends_at ?? null),
@@ -160,6 +168,10 @@ export default function PopupForm({
         ends_at: endsAt,
         sort: d.sort,
         is_published: d.is_published,
+        title_en: d.title_en.trim(),
+        subtitle_en: d.subtitle_en.trim(),
+        body_en: d.body_en.trim(),
+        cta_label_en: d.cta_label_en.trim(),
       };
 
       const { error } = isEdit
@@ -247,6 +259,32 @@ export default function PopupForm({
           onChange={(e) => set("body", e.target.value)}
         />
       </div>
+
+      <fieldset className="en-block">
+        <legend>English (비우면 한국어가 그대로 보입니다)</legend>
+        <div className="field-row">
+          <div className="field">
+            <label htmlFor="p-title-en">Title</label>
+            <input id="p-title-en" className="input" lang="en"
+              value={d.title_en} onChange={(e) => set("title_en", e.target.value)} />
+          </div>
+          <div className="field">
+            <label htmlFor="p-sub-en">Eyebrow</label>
+            <input id="p-sub-en" className="input" lang="en"
+              value={d.subtitle_en} onChange={(e) => set("subtitle_en", e.target.value)} />
+          </div>
+        </div>
+        <div className="field">
+          <label htmlFor="p-body-en">Body</label>
+          <textarea id="p-body-en" className="textarea" lang="en" style={{ minHeight: 70 }}
+            value={d.body_en} onChange={(e) => set("body_en", e.target.value)} />
+        </div>
+        <div className="field">
+          <label htmlFor="p-cta-en">Button label</label>
+          <input id="p-cta-en" className="input" lang="en"
+            value={d.cta_label_en} onChange={(e) => set("cta_label_en", e.target.value)} />
+        </div>
+      </fieldset>
 
       {/* ── 포스터 ─────────────────────────────────── */}
       <div className="field">

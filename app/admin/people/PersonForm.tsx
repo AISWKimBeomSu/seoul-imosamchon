@@ -29,6 +29,11 @@ type Draft = {
   bio: string;
   quote: string;
   photo_alt: string;
+  role_en: string;
+  region_en: string;
+  tagline_en: string;
+  bio_en: string;
+  quote_en: string;
   tags: string;
   sort: number;
   is_published: boolean;
@@ -47,6 +52,11 @@ function initialDraft(p?: AdminPerson): Draft {
     bio: p?.bio ?? "",
     quote: p?.quote ?? "",
     photo_alt: p?.photo_alt ?? "",
+    role_en: p?.role_en ?? "",
+    region_en: p?.region_en ?? "",
+    tagline_en: p?.tagline_en ?? "",
+    bio_en: p?.bio_en ?? "",
+    quote_en: p?.quote_en ?? "",
     tags: (p?.tags ?? []).join(", "),
     sort: p?.sort ?? 0,
     is_published: p?.is_published ?? false,
@@ -147,6 +157,11 @@ export default function PersonForm({ person }: { person?: AdminPerson }) {
             : (person?.consent_at ?? new Date().toISOString())
           : null,
         consent_memo: d.consent_memo.trim(),
+        role_en: d.role_en.trim(),
+        region_en: d.region_en.trim(),
+        tagline_en: d.tagline_en.trim(),
+        bio_en: d.bio_en.trim(),
+        quote_en: d.quote_en.trim(),
       };
 
       const { error } = isEdit
@@ -303,6 +318,39 @@ export default function PersonForm({ person }: { person?: AdminPerson }) {
           placeholder="쿠킹클래스, 망원시장, 김치"
         />
       </div>
+
+      <fieldset className="en-block">
+        <legend>English (비우면 한국어가 그대로 보입니다)</legend>
+        <div className="field-row">
+          <div className="field">
+            <label htmlFor="pe-role-en">Role</label>
+            <input id="pe-role-en" className="input" lang="en"
+              value={d.role_en} onChange={(e) => set("role_en", e.target.value)} />
+          </div>
+          <div className="field">
+            <label htmlFor="pe-region-en">Area</label>
+            <input id="pe-region-en" className="input" lang="en"
+              value={d.region_en} onChange={(e) => set("region_en", e.target.value)} />
+          </div>
+        </div>
+        <div className="field">
+          <label htmlFor="pe-tagline-en">One-line intro</label>
+          <input id="pe-tagline-en" className="input" lang="en"
+            value={d.tagline_en} onChange={(e) => set("tagline_en", e.target.value)} />
+        </div>
+        {d.kind === "senior" && (
+          <div className="field">
+            <label htmlFor="pe-quote-en">Quote</label>
+            <input id="pe-quote-en" className="input" lang="en"
+              value={d.quote_en} onChange={(e) => set("quote_en", e.target.value)} />
+          </div>
+        )}
+        <div className="field">
+          <label htmlFor="pe-bio-en">Bio</label>
+          <textarea id="pe-bio-en" className="textarea" lang="en" style={{ minHeight: 80 }}
+            value={d.bio_en} onChange={(e) => set("bio_en", e.target.value)} />
+        </div>
+      </fieldset>
 
       {/* ── 사진 ─────────────────────────────────────────── */}
       <div className="field">

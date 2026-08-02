@@ -10,6 +10,7 @@ import ApplyButton from "@/components/ApplyButton";
 import PopupMount from "@/components/PopupMount";
 import { getForm } from "@/lib/forms.server";
 import { goHref } from "@/lib/links";
+import { getT } from "@/lib/locale.server";
 import { tagClass, ddayLabel, formatDate, formatBytes } from "@/lib/notices";
 
 export const dynamic = "force-dynamic";
@@ -68,7 +69,7 @@ export default async function NoticeDetailPage({
 
   // 공지별 폼이 따로 지정돼 있으면 그것을, 없으면 시니어 모집 폼을 쓴다.
   // 시니어 폼과 같은 주소라면 계측 경유(/api/go)로 보내 클릭을 셀 수 있게 한다.
-  const seniorForm = await getForm("senior");
+  const [seniorForm, { t }] = await Promise.all([getForm("senior"), getT()]);
   const noticeFormUrl: string | null = notice.google_form_url;
   const useTrackedCta = !noticeFormUrl || noticeFormUrl === seniorForm?.url;
 
@@ -78,13 +79,13 @@ export default async function NoticeDetailPage({
       <main className="section">
         <div className="wrap detail">
           <Link href="/notice" className="backlink">
-            ← 공지사항 목록
+            {t("notice.back")}
           </Link>
           <div className="detail-head">
             <span className={tagClass(notice.category)}>{notice.category}</span>
             <h1>{notice.title}</h1>
             <div className="detail-meta">
-              <span>작성 · 서울이모삼촌</span>
+              <span>{t("notice.author")}</span>
               <span>{formatDate(notice.created_at)}</span>
               {dd && (
                 <span style={{ color: "var(--point)", fontWeight: 700 }}>{dd}</span>
@@ -126,19 +127,19 @@ export default async function NoticeDetailPage({
 
           {attachments.length > 0 && (
             <div className="attach">
-              <h4>첨부파일 · 내려받기</h4>
+              <h4>{t("notice.attachments")}</h4>
               {attachments.map((a) => (
                 <a key={a.id} className="dlbtn" href={`/api/download/${a.id}`}>
                   <span className="ic">{extLabel(a.original_name)}</span>
                   <span>
                     {a.original_name}
                     <small>
-                      {a.kind === "form" ? "신청서 양식 · " : ""}
-                      내려받기
+                      {a.kind === "form" ? t("notice.formKind") : ""}
+                      {t("notice.download")}
                       {a.size_bytes ? ` · ${formatBytes(a.size_bytes)}` : ""}
                     </small>
                   </span>
-                  <span className="go">내려받기 ▾</span>
+                  <span className="go">{t("notice.download")} ▾</span>
                 </a>
               ))}
             </div>
@@ -159,7 +160,7 @@ export default async function NoticeDetailPage({
               </a>
             )}
             <Link className="btn btn-ghost" href="/apply">
-              신청 방법 자세히 보기
+              {t("notice.applyHow")}
             </Link>
           </div>
         </div>
