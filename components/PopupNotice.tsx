@@ -2,15 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import CopyLink from "@/components/CopyLink";
+import {
+  POPUP_STORAGE_PREFIX,
+  POPUP_DISMISS_EVENT,
+} from "@/lib/popup-storage";
 
 const OPEN_DELAY_MS = 900; // 첫 페인트/LCP 이후에 뜬다
 const DAY_MS = 24 * 60 * 60 * 1000;
-
-/** 저장소 접두사 — 푸터의 '다시 보기' 링크가 이걸로 찾아 지운다 */
-export const POPUP_STORAGE_PREFIX = "imo:popup:";
-
-/** 숨김 상태가 바뀌었음을 같은 탭 안에서 알린다(storage 이벤트는 타 탭에서만 온다) */
-export const POPUP_DISMISS_EVENT = "imo:popup-dismiss-changed";
 
 export type PopupItem = {
   id: string;

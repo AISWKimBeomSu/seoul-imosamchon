@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { getLocale } from "@/lib/locale.server";
+import { getSiteOrigin } from "@/lib/origin";
 import "./globals.css";
 
 const noto = Noto_Sans_KR({
@@ -11,11 +12,11 @@ const noto = Noto_Sans_KR({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
 export async function generateMetadata(): Promise<Metadata> {
   // 브라우저 탭 제목과 공유 카드도 화면 언어를 따라간다.
-  const locale = await getLocale();
+  // 주소는 환경변수가 아니라 실제 요청 호스트에서 유도한다 — 로컬 .env의
+  // localhost가 배포 환경에 복사되면 공유 카드 이미지 주소가 통째로 깨진다.
+  const [locale, siteUrl] = await Promise.all([getLocale(), getSiteOrigin()]);
   const en = locale === "en";
 
   return {

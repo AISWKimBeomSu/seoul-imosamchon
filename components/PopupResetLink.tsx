@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   POPUP_STORAGE_PREFIX,
   POPUP_DISMISS_EVENT,
-} from "@/components/PopupNotice";
+} from "@/lib/popup-storage";
 
 /**
  * '오늘 하루 보지 않기'를 눌렀다가 마음이 바뀐 사람을 위한 문.
