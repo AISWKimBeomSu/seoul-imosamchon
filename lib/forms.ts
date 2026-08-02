@@ -30,6 +30,8 @@ export type ApplyForm = {
   description_en: string;
   cta_label_en: string;
   closed_note_en: string;
+  detail: string;      // 상세 페이지 본문 (마크다운)
+  detail_en: string;
 };
 
 export type AdminForm = ApplyForm & {
@@ -37,7 +39,7 @@ export type AdminForm = ApplyForm & {
 };
 
 export const FORM_PUBLIC_COLS =
-  "id, key, title, subtitle, description, url, is_open, cta_label, closed_note, audience, poster_path, poster_alt, accent, sort, title_en, subtitle_en, description_en, cta_label_en, closed_note_en";
+  "id, key, title, subtitle, description, url, is_open, cta_label, closed_note, audience, poster_path, poster_alt, accent, sort, title_en, subtitle_en, description_en, cta_label_en, closed_note_en, detail, detail_en";
 
 export const FORM_ADMIN_COLS = `${FORM_PUBLIC_COLS}, is_published`;
 

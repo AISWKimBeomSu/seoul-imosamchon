@@ -43,10 +43,10 @@ const DICT: Dict = {
   "nav.menu": { ko: "주요 메뉴", en: "Main menu" },
   "nav.home": { ko: "홈", en: "Home" },
   "nav.about": { ko: "브랜드소개", en: "About" },
-  "nav.people": { ko: "소개", en: "Our people" },
+  "nav.people": { ko: "우리 이모·삼촌", en: "Our people" },
   "nav.notice": { ko: "공지사항", en: "Notices" },
   "nav.faq": { ko: "FAQ", en: "FAQ" },
-  "nav.guest": { ko: "손님 안내", en: "For guests" },
+  "nav.classes": { ko: "클래스", en: "Classes" },
   "nav.apply": { ko: "신청하기", en: "Apply / Book" },
 
   "lang.label": { ko: "언어 선택", en: "Language" },
@@ -261,6 +261,38 @@ const DICT: Dict = {
   },
   "about.ctaApply": { ko: "시니어 호스트 신청하기", en: "Apply as a host" },
   "about.ctaPeople": { ko: "함께하는 분들 보기", en: "Meet the hosts" },
+  "about.classesEyebrow": { ko: "클래스", en: "Classes" },
+  "about.classesTitle": {
+    ko: "어떤 하루를 함께할까요",
+    en: "Pick a day to spend with us",
+  },
+  "about.classesSub": {
+    ko: "지금 열려 있는 클래스입니다. 카드를 누르면 자세한 일정과 코스를 볼 수 있어요.",
+    en: "Classes running right now. Tap a card for the full schedule and route.",
+  },
+  "about.classesEmpty": {
+    ko: "준비 중인 클래스가 곧 열립니다.",
+    en: "New classes are on the way.",
+  },
+  "about.hostCtaTitle": {
+    ko: "호스트로 함께하고 싶으세요?",
+    en: "Want to host instead?",
+  },
+  "about.hostCtaSub": {
+    ko: "만 60세 이상이면 누구나. 요리가 아니어도 좋습니다.",
+    en: "Open to anyone aged 60+. Cooking is not required.",
+  },
+
+  // ── 클래스 상세 ────────────────────────────────────────
+  "class.eyebrow": { ko: "클래스 안내", en: "Class" },
+  "class.back": { ko: "← 브랜드소개", en: "← About" },
+  "class.open": { ko: "신청 받는 중", en: "Open" },
+  "class.preparing": { ko: "준비 중", en: "Coming soon" },
+  "class.readMore": { ko: "자세히 보기 →", en: "Read more →" },
+  "class.zoom": { ko: "포스터를 누르면 크게 보입니다", en: "Tap the poster to enlarge" },
+  "class.otherEyebrow": { ko: "다른 클래스", en: "Other classes" },
+  "class.otherTitle": { ko: "이런 것도 있어요", en: "You might also like" },
+  "class.emailUs": { ko: "메일로 문의하기", en: "Email us" },
 
   // ── 손님 안내 ──────────────────────────────────────────
   "guest.eyebrow": { ko: "손님 안내", en: "For guests" },

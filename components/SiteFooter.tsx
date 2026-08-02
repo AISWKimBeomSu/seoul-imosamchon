@@ -27,7 +27,7 @@ export default async function SiteFooter() {
               <li><Link href="/people">{t("nav.people")}</Link></li>
               <li><Link href="/notice">{t("nav.notice")}</Link></li>
               <li><Link href="/faq">{t("nav.faq")}</Link></li>
-              <li><Link href="/guest">{t("nav.guest")}</Link></li>
+              <li><Link href="/about#classes">{t("nav.classes")}</Link></li>
               <li><Link href="/apply">{t("nav.apply")}</Link></li>
             </ul>
           </div>

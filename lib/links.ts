@@ -12,6 +12,7 @@ export type LinkSource =
   | "notice"
   | "about"
   | "guest"
+  | "class"
   | "faq"
   | "footer"
   | "admin"
@@ -27,6 +28,7 @@ export const LINK_SOURCES: LinkSource[] = [
   "notice",
   "about",
   "guest",
+  "class",
   "faq",
   "footer",
   "admin",
@@ -43,7 +45,8 @@ export const SOURCE_LABEL: Record<string, string> = {
   apply: "신청 페이지",
   notice: "공지 상세",
   about: "브랜드소개",
-  guest: "손님 안내(EN)",
+  guest: "손님 안내",
+  class: "클래스 상세",
   faq: "FAQ",
   footer: "하단 메뉴",
   admin: "관리자 확인",

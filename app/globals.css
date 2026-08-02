@@ -287,7 +287,9 @@ details[open] .faq-q::after { content: "\2212"; }
 
 /* ---- 팝업 ---- */
 .popup { border: none; padding: 0; background: transparent; max-width: min(92vw, 460px); }
-.popup.popup-multi { max-width: min(96vw, 1020px); }
+/* <dialog>는 기본이 fit-content라, auto-fit 그리드를 넣으면 트랙 수를
+   좁게 잡아버린다. 여러 장일 때는 너비를 명시해 열 수가 제대로 나오게 한다. */
+.popup.popup-multi { width: min(96vw, 1180px); max-width: min(96vw, 1180px); }
 .popup::backdrop { background: rgba(28, 26, 23, 0.6); }
 .popup-inner {
   background: #fff; border-radius: 22px; padding: 1.1rem 1.4rem 1.3rem;
@@ -321,7 +323,9 @@ details[open] .faq-q::after { content: "\2212"; }
 }
 
 @media (min-width: 768px) {
-  .popup-multi .popup-items { grid-template-columns: repeat(2, 1fr); }
+  /* 카드 수에 따라 2열·3열이 알아서 잡히도록 auto-fit을 쓴다.
+     팝업이 하나 늘 때마다 CSS를 고치는 일이 없어야 한다. */
+  .popup-multi .popup-items { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
   .popup-multi .popup-qr img { width: 132px; height: 132px; }
   .popup-multi .popup-qr { margin: 0.4rem 0 0.2rem; }
   .popup-multi .popup-qr span { font-size: 0.8rem; }
@@ -413,6 +417,64 @@ details[open] .faq-q::after { content: "\2212"; }
 }
 .people-cta h2 { font-size: clamp(1.3rem, 2.6vw, 1.7rem); font-weight: 800; margin-bottom: 0.4rem; }
 .people-cta p { color: var(--sub); margin-bottom: 1.2rem; }
+
+/* ---- 브랜드소개 하위 클래스 ---- */
+.about-classes { margin-top: 2.8rem; }
+.ccards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start; }
+.ccard {
+  display: flex; flex-direction: column; background: #fff; color: var(--ink);
+  border: 1px solid var(--line); border-top: 6px solid var(--point);
+  border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--shadow-card);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.ccard.accent-gold { border-top-color: var(--gold); }
+.ccard.accent-lime { border-top-color: var(--brand-mid); }
+.ccard:hover { transform: translateY(-5px); box-shadow: var(--shadow-card-hover); }
+.ccard-poster { background: var(--soft); line-height: 0; }
+.ccard-poster img { width: 100%; height: auto; max-height: 340px; object-fit: cover; object-position: top; }
+.ccard-body { padding: 1.2rem 1.25rem 1.35rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.ccard-body h3 { font-size: 1.3rem; font-weight: 800; }
+.ccard-eyebrow { color: var(--point); font-weight: 700; font-size: 0.9rem; }
+.ccard.accent-gold .ccard-eyebrow { color: var(--gold-ink); }
+.ccard-desc { color: #4b453d; font-size: 0.98rem; }
+.ccard-go { color: var(--point); font-weight: 800; font-size: 0.95rem; margin-top: 0.35rem; }
+.ccard .badge { align-self: flex-start; }
+
+/* ---- 클래스 상세 ---- */
+.cdetail { display: grid; grid-template-columns: 1fr; gap: 28px; margin-top: 0.6rem; }
+.cdetail-main h1 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); font-weight: 800; margin: 0.2rem 0 0.4rem; line-height: 1.25; }
+.cdetail-sub { color: var(--point); font-weight: 700; font-size: 1.02rem; }
+.cdetail.accent-gold .cdetail-sub { color: var(--gold-ink); }
+.cdetail-lead { color: #433e37; font-size: 1.1rem; max-width: 60ch; margin-top: 0.7rem; }
+.cdetail-poster { display: block; margin: 1.5rem 0 0.4rem; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: var(--soft); line-height: 0; }
+.cdetail-poster img { width: 100%; height: auto; }
+.cdetail-poster .popup-zoom { display: block; padding: 0.5rem 0.8rem; line-height: 1.4; }
+.cdetail-body { margin-top: 1.8rem; }
+.cdetail-body table { border-collapse: collapse; width: 100%; margin: 0 0 1.2rem; font-size: 0.99rem; }
+.cdetail-body th, .cdetail-body td { border: 1px solid var(--line); padding: 0.6rem 0.8rem; text-align: left; vertical-align: top; }
+.cdetail-body td:first-child { background: var(--soft); font-weight: 700; width: 30%; white-space: nowrap; }
+.cdetail-body h2 { font-size: 1.35rem; margin: 1.9rem 0 0.7rem; }
+.cdetail-body h3 { font-size: 1.12rem; margin: 1.4rem 0 0.5rem; color: var(--point); }
+
+.cbox {
+  background: var(--soft); border: 1px solid var(--line); border-radius: 20px;
+  padding: 1.4rem 1.3rem; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 0.55rem;
+}
+.cbox h2 { font-size: 1.2rem; font-weight: 800; }
+.cbox-sub { color: var(--sub); font-size: 0.92rem; }
+.cbox-cta { width: 100%; }
+.cbox-note { color: var(--sub); font-size: 0.9rem; }
+.cbox-qr { display: none; }
+.cbox-qr img { background: #fff; border: 1px solid var(--line2); border-radius: 14px; padding: 8px; }
+.cbox-qr span { display: block; color: var(--sub); font-size: 0.84rem; margin-top: 0.3rem; }
+
+@media (min-width: 900px) {
+  .cdetail { grid-template-columns: minmax(0, 1fr) 320px; align-items: start; }
+  .cdetail-side { position: sticky; top: 92px; }
+  .cbox-qr { display: block; margin-top: 0.4rem; }
+  .cbox-copy { display: none; }
+}
 
 /* ---- 손님 안내(EN) ---- */
 .guest-hero { text-align: center; padding: 40px 0 30px; border-bottom: 1px solid var(--line); }

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getSiteOrigin } from "@/lib/origin";
+import { getFormsFor } from "@/lib/forms.server";
 
 export const dynamic = "force-dynamic";
 
@@ -11,12 +12,14 @@ const STATIC: { path: string; priority: number; freq: MetadataRoute.Sitemap[numb
   { path: "/notice", priority: 0.9, freq: "daily" },
   { path: "/faq", priority: 0.6, freq: "monthly" },
   { path: "/apply", priority: 0.9, freq: "weekly" },
-  { path: "/guest", priority: 0.7, freq: "monthly" },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const SITE = await getSiteOrigin();
+
+  // 클래스 상세는 데이터로 늘어난다 — 목록을 코드에 박지 않는다
+  const classes = await getFormsFor("guest");
 
   let notices: { id: string; updated_at: string }[] = [];
   try {
@@ -37,6 +40,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: s.freq,
       priority: s.priority,
+    })),
+    ...classes.map((c) => ({
+      url: `${SITE}/about/${c.key}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
     })),
     ...notices.map((n) => ({
       url: `${SITE}/notice/${n.id}`,

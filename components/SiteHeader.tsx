@@ -25,11 +25,12 @@ export default async function SiteHeader() {
         </Link>
         <nav className="nav-links" aria-label={t("nav.menu")}>
           <Link href="/">{t("nav.home")}</Link>
+          {/* '손님 안내'는 사실상 쿠킹클래스 소개였다. 브랜드소개 하위로 들여
+              메뉴에서 뺐다 — 무엇이 다른지 알 수 없는 항목이 둘이었다. */}
           <Link href="/about">{t("nav.about")}</Link>
           <Link href="/people">{t("nav.people")}</Link>
           <Link href="/notice">{t("nav.notice")}</Link>
           <Link href="/faq">{t("nav.faq")}</Link>
-          <Link href="/guest">{t("nav.guest")}</Link>
           {/* 신청 종류가 여럿이라 폼으로 직행시키지 않고 선택 페이지로 보낸다. */}
           <Link href="/apply" className="btn btn-primary nav-cta">
             {t("nav.apply")}
