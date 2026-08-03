@@ -5,6 +5,9 @@ import { getLocale } from "@/lib/locale.server";
 import { getSiteOrigin } from "@/lib/origin";
 import "./globals.css";
 
+// 본문 폰트는 Noto Sans KR 고정. shadcn init이 Geist를 끼워 넣으려 하는데,
+// Geist에는 한글 글리프가 없어 사이트 전체가 폴백 폰트로 떨어진다.
+// `shadcn add`를 다시 돌린 뒤에는 이 파일이 되돌려지지 않았는지 확인할 것.
 const noto = Noto_Sans_KR({
   subsets: ["latin"],
   weight: ["400", "500", "700", "800"],
