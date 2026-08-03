@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { getLocale } from "@/lib/locale.server";
+import { getLocale, getT } from "@/lib/locale.server";
 import { getSiteOrigin } from "@/lib/origin";
+import ScrollToTop from "@/components/ScrollToTop";
 import "./globals.css";
 
 // 본문 폰트는 Noto Sans KR 고정. shadcn init이 Geist를 끼워 넣으려 하는데,
@@ -52,11 +53,14 @@ export default async function RootLayout({
   // 문서 언어를 실제 표시 언어와 맞춘다. 스크린리더 발음과 브라우저 번역 제안이
   // 여기에 달려 있어서, lang이 틀리면 영어 페이지를 한국어로 읽는다.
   const locale = await getLocale();
+  const { t } = await getT();
 
   return (
     <html lang={locale} className={noto.variable}>
       <body>
         {children}
+        {/* 모든 페이지에 뜬다. 홈 링크가 아니라 현재 페이지의 스크롤만 되돌린다. */}
+        <ScrollToTop label={t("common.toTop")} />
         {/* 쿠키리스 페이지뷰 — KPI 분모(신청 시작률의 '세션') 확보용 */}
         <Analytics />
       </body>

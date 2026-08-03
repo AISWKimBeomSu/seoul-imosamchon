@@ -373,7 +373,11 @@ const DICT: Dict = {
     ko: "후원 · 서울특별시50플러스재단 시니어일자리지원센터",
     en: "Supported by the Seoul 50 Plus Foundation",
   },
-  "foot.top": { ko: "↑ 처음으로", en: "↑ Back to top" },
+  // 예전 푸터의 "↑ 처음으로"는 라벨과 동작이 어긋나 있었다 — 화살표에 영문이
+  // "Back to top"인데 실제로는 홈(/)으로 이동했다. 스크롤 최상단 이동은
+  // 이제 화면 오른쪽 아래 떠 있는 버튼(ScrollToTop)이 맡고, 홈으로 가는 길은
+  // 바로가기 목록의 "홈"이 맡는다. 두 기능을 한 링크에 겹쳐 두지 않는다.
+  "common.toTop": { ko: "맨 위로", en: "Back to top" },
   "foot.showPopup": {
     ko: "공지 팝업 다시 보기",
     en: "Show the notice popup again",

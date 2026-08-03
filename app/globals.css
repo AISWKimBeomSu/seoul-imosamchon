@@ -442,6 +442,31 @@ details[open] .faq-q::after { content: "\2212"; }
 .preview-bar b { background: var(--gold); color: #fff; border-radius: 8px; padding: 0.15rem 0.5rem; font-size: 0.8rem; }
 .preview-bar a { color: var(--gold-ink); font-weight: 700; text-decoration: underline; margin-left: auto; }
 
+/* ---- 맨 위로 (모든 페이지) ----
+   화면에는 화살표만 둔다. 라벨은 aria-label로만 간다 — 시니어 대상이라
+   보통은 아이콘 단독을 피하지만, 이 버튼은 콘텐츠 위에 떠 있어 글자를
+   넣으면 가리는 면적이 커진다. 대신 56px로 크게 잡고 대비를 높였다. */
+.to-top {
+  position: fixed;
+  right: 18px;
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  z-index: 40;
+  width: 56px; height: 56px;
+  display: grid; place-items: center;
+  border: 2px solid var(--point); border-radius: 999px;
+  background: #fff; color: var(--point);
+  font-size: 1.5rem; font-weight: 800; line-height: 1;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity 0.18s, transform 0.18s, visibility 0.18s, background 0.14s, color 0.14s;
+}
+.to-top[data-shown="1"] { opacity: 1; visibility: visible; transform: none; }
+.to-top:hover { background: var(--point); color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  .to-top { transition: background 0.14s, color 0.14s; }
+}
+
 /* ---- 접근성 유틸 ---- */
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;

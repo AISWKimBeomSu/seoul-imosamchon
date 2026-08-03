@@ -23,6 +23,10 @@ export default async function SiteFooter() {
           <div>
             <h4>{t("foot.links")}</h4>
             <ul>
+              {/* 예전에는 푸터 맨 아래 "↑ 처음으로"가 홈 링크를 겸했는데,
+                  화살표 라벨과 동작이 어긋나 헷갈렸다(§PRD GL-3의 '처음으로'는
+                  이 항목이 대신한다). 스크롤 최상단 이동은 ScrollToTop이 맡는다. */}
+              <li><Link href="/">{t("nav.home")}</Link></li>
               <li><Link href="/about">{t("nav.about")}</Link></li>
               <li><Link href="/people">{t("nav.people")}</Link></li>
               <li><Link href="/notice">{t("nav.notice")}</Link></li>
@@ -55,9 +59,6 @@ export default async function SiteFooter() {
           </Link>
           {/* 숨긴 기록이 있을 때만 나타난다 */}
           <PopupResetLink label={t("foot.showPopup")} />
-          <Link href="/" style={{ color: "var(--point)", fontWeight: 700 }}>
-            {t("foot.top")}
-          </Link>
         </div>
       </div>
     </footer>
