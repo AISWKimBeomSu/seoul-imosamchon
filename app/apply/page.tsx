@@ -2,6 +2,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import CopyEmail from "@/components/CopyEmail";
 import ApplyFormCard from "@/components/ApplyFormCard";
+import PrivacyNote from "@/components/PrivacyNote";
 import PopupMount from "@/components/PopupMount";
 import { getSiteConfig } from "@/lib/config";
 import { getForms } from "@/lib/forms.server";
@@ -99,9 +100,7 @@ export default async function ApplyPage({
               {t("apply.phoneSub")}
               {cfg.contact_phone ? ` (${cfg.contact_phone})` : ""}
             </p>
-            <p style={{ color: "var(--sub)", fontSize: "0.85rem", marginTop: "0.9rem" }}>
-              {t("apply.privacy")}
-            </p>
+            <PrivacyNote className="mt-4" />
           </section>
         </div>
       </main>

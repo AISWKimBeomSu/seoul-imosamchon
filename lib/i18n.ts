@@ -343,6 +343,22 @@ const DICT: Dict = {
     en: "Bookings are not open right now. Please write to us.",
   },
 
+  // ── 개인정보처리방침 ───────────────────────────────────
+  // 본문은 lib/privacy.ts에 있다. 여기는 페이지 껍데기 문구만.
+  "privacy.eyebrow": { ko: "개인정보", en: "Privacy" },
+  "privacy.title": { ko: "개인정보처리방침", en: "Privacy policy" },
+  "privacy.lead": {
+    ko: "어떤 정보를 왜 받는지, 얼마나 두는지, 지워 달라고 하시면 어떻게 되는지를 적었습니다. 어려운 말은 되도록 뺐습니다.",
+    en: "What we ask for and why, how long we keep it, and what happens when you ask us to delete it. We have kept the legal wording to a minimum.",
+  },
+  "privacy.effective": { ko: "시행일", en: "In effect from" },
+  "privacy.toc": { ko: "이 문서의 차례", en: "On this page" },
+  "privacy.short": { ko: "개인정보처리방침", en: "Privacy policy" },
+  "privacy.readMore": {
+    ko: "개인정보처리방침 보기 ›",
+    en: "Read the privacy policy ›",
+  },
+
   // ── 푸터 ──────────────────────────────────────────────
   "foot.motto": {
     ko: "부엌은 빌려도, 60년을 살아야 얻어지는 손맛과 이야기는 빌릴 수 없습니다. 시니어의 세월을 정당한 일자리로 잇습니다.",

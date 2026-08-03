@@ -43,6 +43,16 @@ export default async function SiteFooter() {
         </div>
         <div className="foot-legal">
           <span>© 2026 {t("brand.name")} (Team theOne)</span>
+          {/* 개인정보보호법 §30 — 정보주체가 '쉽게 확인할 수 있도록' 공개해야
+              한다. 그래서 바로가기 목록에 섞지 않고 여기서 굵게 세워 둔다. */}
+          {/* .foot-legal은 0.8rem(12.8px)이다. 법정 고지 링크를 그 크기로
+              두면 '쉽게 확인'이 아니고, 시니어 사이트의 14px 하한도 깬다. */}
+          <Link
+            href="/privacy"
+            className="text-[0.95rem] font-bold text-point underline"
+          >
+            {t("privacy.short")}
+          </Link>
           {/* 숨긴 기록이 있을 때만 나타난다 */}
           <PopupResetLink label={t("foot.showPopup")} />
           <Link href="/" style={{ color: "var(--point)", fontWeight: 700 }}>

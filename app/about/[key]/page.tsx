@@ -8,6 +8,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import PersonAvatar from "@/components/PersonAvatar";
 import PopupMount from "@/components/PopupMount";
+import PrivacyNote from "@/components/PrivacyNote";
 import CopyLink from "@/components/CopyLink";
 import { getForm, getFormsFor } from "@/lib/forms.server";
 import { getPeople } from "@/lib/people.server";
@@ -155,6 +156,8 @@ export default async function ClassDetailPage({
                         className="btn btn-ghost cbox-cta"
                       />
                     </div>
+                    {/* 여기서 바로 구글폼으로 빠지므로 /apply를 안 거친다 */}
+                    <PrivacyNote className="mt-4" />
                   </>
                 ) : (
                   <>

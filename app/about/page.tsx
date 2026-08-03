@@ -3,6 +3,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ApplyButton from "@/components/ApplyButton";
 import ClassCard from "@/components/ClassCard";
+import PrivacyNote from "@/components/PrivacyNote";
 import PopupMount from "@/components/PopupMount";
 import { getFormsFor } from "@/lib/forms.server";
 import { getT, getLocale } from "@/lib/locale.server";
@@ -130,6 +131,7 @@ export default async function AboutPage() {
                 {t("about.ctaPeople")}
               </Link>
             </div>
+            <PrivacyNote className="mt-5" />
           </div>
         </div>
       </main>
