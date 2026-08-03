@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import LanguageToggle from "@/components/LanguageToggle";
+import NavMenu from "@/components/NavMenu";
 import { getT } from "@/lib/locale.server";
 
 export default async function SiteHeader() {
@@ -23,7 +24,17 @@ export default async function SiteHeader() {
             <span className="bsub">{t("brand.tagline")}</span>
           </span>
         </Link>
-        <nav className="nav-links" aria-label={t("nav.menu")}>
+        {/* 신청 종류가 여럿이라 폼으로 직행시키지 않고 선택 페이지로 보낸다.
+            CTA는 모바일에서도 메뉴 안으로 접지 않는다 — 이 버튼이 K1 지표의
+            유입구라, 한 번 더 눌러야 보이는 자리로 내리면 안 된다. */}
+        <Link href="/apply" className="btn btn-primary nav-cta">
+          {t("nav.apply")}
+        </Link>
+        <NavMenu
+          label={t("nav.menu")}
+          openLabel={t("nav.open")}
+          closeLabel={t("nav.close")}
+        >
           <Link href="/">{t("nav.home")}</Link>
           {/* '손님 안내'는 사실상 쿠킹클래스 소개였다. 브랜드소개 하위로 들여
               메뉴에서 뺐다 — 무엇이 다른지 알 수 없는 항목이 둘이었다. */}
@@ -31,12 +42,8 @@ export default async function SiteHeader() {
           <Link href="/people">{t("nav.people")}</Link>
           <Link href="/notice">{t("nav.notice")}</Link>
           <Link href="/faq">{t("nav.faq")}</Link>
-          {/* 신청 종류가 여럿이라 폼으로 직행시키지 않고 선택 페이지로 보낸다. */}
-          <Link href="/apply" className="btn btn-primary nav-cta">
-            {t("nav.apply")}
-          </Link>
           <LanguageToggle locale={locale} />
-        </nav>
+        </NavMenu>
       </div>
     </header>
   );

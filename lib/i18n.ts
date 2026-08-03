@@ -48,6 +48,10 @@ const DICT: Dict = {
   "nav.faq": { ko: "FAQ", en: "FAQ" },
   "nav.classes": { ko: "클래스", en: "Classes" },
   "nav.apply": { ko: "신청하기", en: "Apply / Book" },
+  // 모바일 메뉴 버튼. 아이콘(☰)만으로 두지 않는 이유는 §접근성 —
+  // 시니어 사용자에게 햄버거 아이콘 단독은 인지율이 낮다. 항상 글자를 함께 쓴다.
+  "nav.open": { ko: "메뉴", en: "Menu" },
+  "nav.close": { ko: "닫기", en: "Close" },
 
   "lang.label": { ko: "언어 선택", en: "Language" },
   "lang.toKo": { ko: "한국어", en: "한국어" },
