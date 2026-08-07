@@ -1,6 +1,6 @@
 import { NextResponse, after, userAgent } from "next/server";
 import { getForm } from "@/lib/forms.server";
-import { FORM_URL_PATTERN, FORM_KEY_PATTERN } from "@/lib/forms";
+import { FORM_URL_PATTERN, FORM_KEY_PATTERN, isNative } from "@/lib/forms";
 import { createServiceClient } from "@/lib/supabase/service";
 import { LINK_SOURCES } from "@/lib/links";
 
@@ -29,15 +29,27 @@ export async function GET(
     return NextResponse.redirect(new URL("/apply", origin), 302);
   }
 
-  // 방어 2선: DB CHECK를 통과했더라도 리다이렉트 직전에 한 번 더 본다.
-  if (!form.is_open || !form.url || !FORM_URL_PATTERN.test(form.url)) {
+  // ── 목적지 결정 ─────────────────────────────────────────────────────────
+  // 자체 예약으로 전환한 체험은 사이트 안에서 이어진다. 이 분기가 없으면
+  // 인쇄된 QR·포스터·팝업이 전부 구글폼으로 계속 나간다 — 종이는 회수할 수
+  // 없으니, 그 링크가 늘 맞는 곳을 가리키게 하는 건 이 라우트의 몫이다.
+  let destination: string;
+  if (isNative(form)) {
+    destination = new URL(`/book/${key}`, origin).toString();
+  } else if (!form.is_open || !form.url || !FORM_URL_PATTERN.test(form.url)) {
+    // 방어 2선: DB CHECK를 통과했더라도 리다이렉트 직전에 한 번 더 본다.
+    // 마감 안내는 계측하지 않는다 — '신청하려 한 클릭'이 아니다.
     return NextResponse.redirect(
       new URL(`/apply?closed=${encodeURIComponent(key)}`, origin),
       302,
     );
+  } else {
+    destination = form.url;
   }
 
   // ── 계측 ────────────────────────────────────────────────────────────────
+  // 목적지가 구글폼이든 우리 예약 페이지든 '신청하려 눌렀다'는 사실은 같다.
+  // 자체 예약으로 옮겨도 퍼널 지표가 끊기지 않게 여기서 계속 기록한다.
   const rawSrc = reqUrl.searchParams.get("src") ?? "unknown";
   const source = SOURCES.has(rawSrc) ? rawSrc : "unknown"; // 임의 문자열 저장 방지
 
@@ -73,5 +85,5 @@ export async function GET(
     }
   });
 
-  return NextResponse.redirect(form.url, 302);
+  return NextResponse.redirect(destination, 302);
 }

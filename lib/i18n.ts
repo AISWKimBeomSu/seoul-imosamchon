@@ -144,6 +144,11 @@ const DICT: Dict = {
     ko: "지원서는 Google Forms에서 접수되며, 개인정보 처리 주체는 팀 theOne입니다.",
     en: "Applications are collected via Google Forms. Team theOne is the data controller.",
   },
+  // 자체 예약은 구글을 거치지 않는다. 같은 문구를 쓰면 허위 고지가 된다.
+  "apply.privacyNative": {
+    ko: "예약 정보는 서울이모삼촌이 직접 받아 보관하며, 체험 후 6개월이 지나면 지웁니다.",
+    en: "Booking details are collected and held by Seoul Imo·Samchon, and deleted 6 months after the experience.",
+  },
 
   // ── 소개 ──────────────────────────────────────────────
   "people.eyebrow": { ko: "우리 사람들", en: "Our people" },

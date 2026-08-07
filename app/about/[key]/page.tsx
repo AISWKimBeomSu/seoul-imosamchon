@@ -207,8 +207,9 @@ export default async function ClassDetailPage({
                         className="btn btn-ghost cbox-cta"
                       />
                     </div>
-                    {/* 여기서 바로 구글폼으로 빠지므로 /apply를 안 거친다 */}
-                    <PrivacyNote className="mt-4" />
+                    {/* 여기서 바로 신청으로 빠지므로 /apply를 안 거친다.
+                        받는 주체가 모드에 따라 다르니 문구도 갈라진다. */}
+                    <PrivacyNote className="mt-4" mode={native ? "native" : "external"} />
                   </>
                 ) : (
                   <>

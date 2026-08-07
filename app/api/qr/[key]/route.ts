@@ -1,5 +1,5 @@
 import { getForm } from "@/lib/forms.server";
-import { FORM_KEY_PATTERN } from "@/lib/forms";
+import { FORM_KEY_PATTERN, isNative } from "@/lib/forms";
 import { renderQrSvg } from "@/lib/qr";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +14,9 @@ export async function GET(
   }
 
   const form = await getForm(key);
-  if (!form?.url) {
+  // 자체 예약 체험은 구글폼 주소가 없다(있어도 안 쓴다). 그래도 QR은 필요하다 —
+  // 목적지는 /api/go가 모드를 보고 정한다.
+  if (!form || (!isNative(form) && !form.url)) {
     return new Response("Not configured", { status: 404 });
   }
 
