@@ -2,10 +2,11 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ApplyButton from "@/components/ApplyButton";
-import ClassCard from "@/components/ClassCard";
+import ExperienceCard from "@/components/ExperienceCard";
 import PrivacyNote from "@/components/PrivacyNote";
 import PopupMount from "@/components/PopupMount";
 import { getFormsFor } from "@/lib/forms.server";
+import { getSessionsByForm } from "@/lib/sessions.server";
 import { getT, getLocale } from "@/lib/locale.server";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,11 @@ export async function generateMetadata() {
 }
 
 export default async function AboutPage() {
-  const [{ t }, classes] = await Promise.all([getT(), getFormsFor("guest")]);
+  const [{ t, locale }, classes, sessionsByForm] = await Promise.all([
+    getT(),
+    getFormsFor("guest"),
+    getSessionsByForm(),
+  ]);
 
   const cards = [
     [t("about.card1t"), t("about.card1d")],
@@ -105,9 +110,14 @@ export default async function AboutPage() {
             </p>
 
             {classes.length > 0 ? (
-              <div className="ccards">
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {classes.map((f) => (
-                  <ClassCard key={f.key} form={f} />
+                  <ExperienceCard
+                    key={f.key}
+                    form={f}
+                    sessions={sessionsByForm.get(f.key) ?? []}
+                    locale={locale}
+                  />
                 ))}
               </div>
             ) : (

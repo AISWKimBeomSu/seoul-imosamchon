@@ -1,3 +1,4 @@
+import Link from "next/link";
 import PersonAvatar from "@/components/PersonAvatar";
 import { getT } from "@/lib/locale.server";
 import { pick } from "@/lib/i18n";
@@ -20,7 +21,16 @@ export default async function PersonCard({ person }: { person: Person }) {
   return (
     <article className={`pcard${isTeam ? " team" : ""}`}>
       <PersonAvatar person={person} size={isTeam ? 96 : 132} />
-      <h3>{person.name}</h3>
+      <h3>
+        {/* slug가 채워진 분만 상세 페이지가 있다 — 없는 분을 링크하면 404로 보낸다 */}
+        {person.slug ? (
+          <Link href={`/people/${person.slug}`} className="underline">
+            {person.name}
+          </Link>
+        ) : (
+          person.name
+        )}
+      </h3>
       {(role || region) && (
         <p className="pcard-role">
           {role}

@@ -18,6 +18,13 @@ export type Person = {
   photo_alt: string;
   tags: string[];
   sort: number;
+  /**
+   * 상세 페이지 주소. 0013에서 미리 만들어 두고 v2.0에서야 쓰기 시작했다.
+   * 비어 있으면 상세 페이지가 없는 것으로 보고 카드에서 링크를 걸지 않는다.
+   */
+  slug: string | null;
+  /** 인터뷰 본문(마크다운). 비어 있으면 bio만 보여준다. */
+  story: string | null;
   // 비어 있으면 한국어로 떨어진다 (lib/i18n.ts의 pick)
   role_en: string;
   region_en: string;
@@ -34,7 +41,7 @@ export type AdminPerson = Person & {
 };
 
 export const PERSON_PUBLIC_COLS =
-  "id, kind, name, role, region, tagline, bio, quote, photo_path, photo_alt, tags, sort, role_en, region_en, tagline_en, bio_en, quote_en";
+  "id, kind, name, role, region, tagline, bio, quote, photo_path, photo_alt, tags, sort, slug, story, role_en, region_en, tagline_en, bio_en, quote_en";
 
 export const PERSON_ADMIN_COLS = `${PERSON_PUBLIC_COLS}, is_published, consent_at, consent_memo, created_at`;
 

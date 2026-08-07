@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getSiteOrigin } from "@/lib/origin";
 import { getFormsFor } from "@/lib/forms.server";
+import { getPeople } from "@/lib/people.server";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // 클래스 상세는 데이터로 늘어난다 — 목록을 코드에 박지 않는다
   const classes = await getFormsFor("guest");
+
+  // 호스트 상세는 slug가 채워진 공개 인물만 — 체험에서 호스트가 곧 상품이라
+  // 검색으로 사람 이름을 찾아 들어오는 경로가 실제로 생긴다.
+  const hosts = (await getPeople()).filter((p) => p.slug);
 
   let notices: { id: string; updated_at: string }[] = [];
   try {
@@ -49,6 +54,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.8,
+    })),
+    ...hosts.map((p) => ({
+      url: `${SITE}/people/${p.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
     ...notices.map((n) => ({
       url: `${SITE}/notice/${n.id}`,

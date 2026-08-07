@@ -15,6 +15,7 @@ import SessionPicker from "@/components/SessionPicker";
 import { getForm, getFormsFor } from "@/lib/forms.server";
 import { getSessionsFor } from "@/lib/sessions.server";
 import { getPeople } from "@/lib/people.server";
+import { getFormHosts } from "@/lib/hosts.server";
 import { openSessionCount } from "@/lib/sessions";
 import { isBookableForm, isNative, posterUrl } from "@/lib/forms";
 import { qrVersion } from "@/lib/qr";
@@ -56,7 +57,7 @@ export default async function ClassDetailPage({
   const form = await getClass(key);
   if (!form) notFound();
 
-  const [{ t, locale }, hosts, others, cfg, site, sessions] = await Promise.all([
+  const [{ t, locale }, seniors, others, cfg, site, sessions] = await Promise.all([
     getT(),
     getPeople("senior"),
     getFormsFor("guest"),
@@ -71,6 +72,11 @@ export default async function ClassDetailPage({
   const ctaLabel = pick(locale, form.cta_label, form.cta_label_en);
   const closedNote = pick(locale, form.closed_note, form.closed_note_en);
   const detail = pick(locale, form.detail, form.detail_en);
+
+  // 이 체험을 실제로 진행하는 분들. 연결이 아직 없으면 시니어 앞 3명으로 떨어진다
+  // — 데이터를 채우기 전에도 페이지가 비어 보이지 않게.
+  const linked = await getFormHosts(form.key, seniors);
+  const hosts = linked.length > 0 ? linked : seniors.slice(0, 3);
 
   const poster = posterUrl(form.poster_path);
   const cutoff = form.cutoff_hours ?? 0;
@@ -235,7 +241,16 @@ export default async function ClassDetailPage({
                 {hosts.slice(0, 3).map((p) => (
                   <article className="pcard team" key={p.id}>
                     <PersonAvatar person={p} size={96} />
-                    <h3>{p.name}</h3>
+                    <h3>
+                      {/* slug가 있는 분만 상세 페이지가 있다. 없으면 이름만. */}
+                      {p.slug ? (
+                        <Link href={`/people/${p.slug}`} className="underline">
+                          {p.name}
+                        </Link>
+                      ) : (
+                        p.name
+                      )}
+                    </h3>
                     {pick(locale, p.region, p.region_en) && (
                       <p className="pcard-role">{pick(locale, p.region, p.region_en)}</p>
                     )}
