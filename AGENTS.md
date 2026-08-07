@@ -8,6 +8,8 @@ Next.js 16 App Router + Supabase + Vercel.
 - `docs/PRD.md` — 무엇을 만드는가
 - `docs/TSD.md` — 어떻게 만드는가
 - `docs/PLAN.md` — 진행 상황 / 기술 부채
+- `docs/PLATFORM.md` — **v2.0 체험 예약 플랫폼 (현재 작업 중인 명세)**.
+  v1.2~v1.4 실측 스냅샷도 여기 있다 — PLAN.md는 v1.1에서 멈춰 있다
 
 ## 명령어
 
