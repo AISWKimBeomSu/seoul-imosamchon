@@ -140,3 +140,118 @@ export async function getAdminBooking(id: string): Promise<AdminBookingRow | nul
     ) ?? null
   );
 }
+
+/** 전화 접수분을 넣을 수 있는 회차 — 앞으로 열려 있고 자리가 남은 것 */
+export async function getBookableSessions(): Promise<
+  (Session & { formTitle: string })[]
+> {
+  const supabase = createServiceClient();
+  if (!supabase) return [];
+
+  try {
+    const { data, error } = await supabase
+      .from("sessions")
+      .select(SESSION_PUBLIC_COLS)
+      .gt("starts_at", new Date().toISOString())
+      .eq("is_closed", false)
+      .order("starts_at", { ascending: true });
+    if (error) return [];
+
+    const sessions = ((data ?? []) as unknown as Session[]).filter(
+      (s) => s.capacity > s.booked_count,
+    );
+    if (sessions.length === 0) return [];
+
+    const { data: forms } = await supabase.from("forms").select("key, title");
+    const titles = new Map(
+      ((forms ?? []) as { key: string; title: string }[]).map((f) => [f.key, f.title]),
+    );
+
+    return sessions.map((s) => ({
+      ...s,
+      formTitle: titles.get(s.form_key) ?? s.form_key,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * 파기 대상 (F16-4).
+ *
+ * 방침이 "체험 후 6개월 파기"라고 적혀 있다. 그건 문장이 아니라 운영자의
+ * 실제 의무다 — 지킬 수단이 화면에 없으면 안 지켜진다.
+ *
+ * 자동 삭제(pg_cron)를 안 쓰는 이유: 지운 건 되돌릴 수 없다. 사람이 건수를
+ * 보고 누르는 편이 사고 확률이 낮다.
+ */
+export type PurgeTarget = { count: number; oldest: string | null };
+
+export async function getPurgeTarget(): Promise<PurgeTarget> {
+  const supabase = createServiceClient();
+  if (!supabase) return { count: 0, oldest: null };
+
+  try {
+    const cutoff = new Date();
+    cutoff.setMonth(cutoff.getMonth() - 6);
+
+    const { data: sessions } = await supabase
+      .from("sessions")
+      .select("id, starts_at")
+      .lt("starts_at", cutoff.toISOString());
+
+    const ids = ((sessions ?? []) as { id: string; starts_at: string }[]).map(
+      (s) => s.id,
+    );
+    if (ids.length === 0) return { count: 0, oldest: null };
+
+    const { count } = await supabase
+      .from("bookings")
+      .select("id", { count: "exact", head: true })
+      .in("session_id", ids);
+
+    const oldest = (sessions ?? [])
+      .map((s: { starts_at: string }) => s.starts_at)
+      .sort()[0];
+
+    return { count: count ?? 0, oldest: oldest ?? null };
+  } catch {
+    return { count: 0, oldest: null };
+  }
+}
+
+/** 파기 실행. 예약을 지우고, 예약이 0건이 된 지난 회차도 함께 정리한다. */
+export async function purgeOldBookings(): Promise<{ bookings: number; sessions: number }> {
+  const supabase = createServiceClient();
+  if (!supabase) return { bookings: 0, sessions: 0 };
+
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - 6);
+
+  const { data: sessions } = await supabase
+    .from("sessions")
+    .select("id")
+    .lt("starts_at", cutoff.toISOString());
+
+  const ids = ((sessions ?? []) as { id: string }[]).map((s) => s.id);
+  if (ids.length === 0) return { bookings: 0, sessions: 0 };
+
+  const { data: deleted } = await supabase
+    .from("bookings")
+    .delete()
+    .in("session_id", ids)
+    .select("id");
+
+  // 예약이 사라진 지난 회차는 남겨 둘 이유가 없다.
+  // FK restrict가 있으니 예약이 남아 있으면 여기서 조용히 실패한다 — 그게 맞다.
+  const { data: deletedSessions } = await supabase
+    .from("sessions")
+    .delete()
+    .in("id", ids)
+    .select("id");
+
+  return {
+    bookings: (deleted ?? []).length,
+    sessions: (deletedSessions ?? []).length,
+  };
+}

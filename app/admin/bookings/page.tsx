@@ -1,7 +1,14 @@
 import AdminNav from "@/components/AdminNav";
 import BookingActions from "@/components/BookingActions";
+import ManualBooking from "@/components/ManualBooking";
+import PurgePanel from "@/components/PurgePanel";
 import { requireAdmin } from "@/lib/admin-guard.server";
-import { getAdminBookings, type AdminBookingRow } from "@/lib/admin-bookings.server";
+import {
+  getAdminBookings,
+  getBookableSessions,
+  getPurgeTarget,
+  type AdminBookingRow,
+} from "@/lib/admin-bookings.server";
 import { isEmailConfigured } from "@/lib/email.server";
 import { formatSessionWhen } from "@/lib/sessions";
 import { statusLabel } from "@/lib/bookings";
@@ -105,7 +112,8 @@ function Section({
 export default async function AdminBookingsPage() {
   await requireAdmin();
 
-  const { pending, upcoming, past, closed, unavailable } = await getAdminBookings();
+  const [{ pending, upcoming, past, closed, unavailable }, bookable, purge] =
+    await Promise.all([getAdminBookings(), getBookableSessions(), getPurgeTarget()]);
   const mailOff = !isEmailConfigured();
 
   return (
@@ -154,6 +162,12 @@ export default async function AdminBookingsPage() {
               rows={closed}
               empty="아직 없습니다."
             />
+
+            {/* 이메일을 안 쓰시는 분과 전화 접수분의 유일한 통로.
+                여기를 안 거치면 그 예약이 정원 밖에서 돌아 잔여석이 거짓이 된다. */}
+            <ManualBooking sessions={bookable} />
+
+            <PurgePanel count={purge.count} oldest={purge.oldest} />
           </>
         )}
       </div>

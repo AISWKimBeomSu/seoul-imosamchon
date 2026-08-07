@@ -2,6 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { getPeople } from "@/lib/people.server";
+import { getFormsFor } from "@/lib/forms.server";
+import { getSessionsByForm } from "@/lib/sessions.server";
+import { isBookableForm } from "@/lib/forms";
+import { openSessionCount } from "@/lib/sessions";
 import { getT } from "@/lib/locale.server";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -9,6 +13,7 @@ import NoticeCard from "@/components/NoticeCard";
 import PeopleStrip from "@/components/PeopleStrip";
 import PopupMount from "@/components/PopupMount";
 import PreviewBanner from "@/components/PreviewBanner";
+import ExperienceCard from "@/components/ExperienceCard";
 import { isPreviewMode } from "@/lib/preview";
 
 export const dynamic = "force-dynamic";
@@ -34,11 +39,23 @@ export default async function Home({
   const isPreview = await isPreviewMode(preview);
 
   // 병렬 실행 — 직렬로 쌓이면 그만큼 LCP가 밀린다
-  const [notices, seniors, { t, locale }] = await Promise.all([
-    getLatestNotices(),
-    getPeople("senior", { includeUnpublished: isPreview }),
-    getT(),
-  ]);
+  const [notices, seniors, { t, locale }, classes, sessionsByForm] =
+    await Promise.all([
+      getLatestNotices(),
+      getPeople("senior", { includeUnpublished: isPreview }),
+      getT(),
+      getFormsFor("guest"),
+      getSessionsByForm(),
+    ]);
+
+  // 지금 실제로 신청을 받고 있는 체험만 첫 화면에 올린다.
+  // 마감된 걸 섞으면 "뭘 눌러야 하지"가 되고, 전환이 떨어진다.
+  const openClasses = classes.filter((f) =>
+    isBookableForm(
+      f,
+      openSessionCount(sessionsByForm.get(f.key) ?? [], f.cutoff_hours ?? 0),
+    ),
+  );
 
   return (
     <>
@@ -88,6 +105,36 @@ export default async function Home({
             </div>
           </div>
         </section>
+
+        {/* 지금 예약받는 체험 — 히어로 바로 아래.
+            공지보다 먼저 두는 이유: 손님이 첫 화면에서 찾는 건 "무엇을 언제
+            할 수 있나"이지 공지사항이 아니다. 열린 체험이 없으면 통째로 빠진다. */}
+        {openClasses.length > 0 && (
+          <section className="section">
+            <div className="wrap">
+              <div className="sec-top">
+                <div>
+                  <div className="eyebrow">{t("home.bookingEyebrow")}</div>
+                  <h2>{t("home.bookingTitle")}</h2>
+                  <p className="sec-sub">{t("home.bookingSub")}</p>
+                </div>
+                <Link className="more" href="/about#classes">
+                  {t("home.bookingAll")}
+                </Link>
+              </div>
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {openClasses.map((f) => (
+                  <ExperienceCard
+                    key={f.key}
+                    form={f}
+                    sessions={sessionsByForm.get(f.key) ?? []}
+                    locale={locale}
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="section">
           <div className="wrap">

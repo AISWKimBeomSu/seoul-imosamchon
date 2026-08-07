@@ -462,6 +462,18 @@ const DICT: Dict = {
   },
   "session.next": { ko: "다음 회차", en: "Next date" },
 
+  // ── 홈: 지금 예약받는 체험 ────────────────────────────
+  "home.bookingEyebrow": { ko: "지금 신청받는 체험", en: "Open for booking" },
+  "home.bookingTitle": {
+    ko: "이번 달에 만날 수 있어요",
+    en: "You can join these this month",
+  },
+  "home.bookingSub": {
+    ko: "서울에서 오래 살아온 이모·삼촌이 직접 진행합니다.",
+    en: "Hosted by Seoul residents who have lived here a long time.",
+  },
+  "home.bookingAll": { ko: "체험 전체 보기", en: "See all experiences" },
+
   // ── 푸터 ──────────────────────────────────────────────
   "foot.motto": {
     ko: "부엌은 빌려도, 60년을 살아야 얻어지는 손맛과 이야기는 빌릴 수 없습니다. 시니어의 세월을 정당한 일자리로 잇습니다.",
