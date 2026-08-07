@@ -10,9 +10,13 @@ import PersonAvatar from "@/components/PersonAvatar";
 import PopupMount from "@/components/PopupMount";
 import PrivacyNote from "@/components/PrivacyNote";
 import CopyLink from "@/components/CopyLink";
+import ExperienceMeta from "@/components/ExperienceMeta";
+import SessionPicker from "@/components/SessionPicker";
 import { getForm, getFormsFor } from "@/lib/forms.server";
+import { getSessionsFor } from "@/lib/sessions.server";
 import { getPeople } from "@/lib/people.server";
-import { isFormAvailable, posterUrl } from "@/lib/forms";
+import { openSessionCount } from "@/lib/sessions";
+import { isBookableForm, isNative, posterUrl } from "@/lib/forms";
 import { qrVersion } from "@/lib/qr";
 import { getSiteOrigin } from "@/lib/origin";
 import { goHref } from "@/lib/links";
@@ -52,12 +56,13 @@ export default async function ClassDetailPage({
   const form = await getClass(key);
   if (!form) notFound();
 
-  const [{ t, locale }, hosts, others, cfg, site] = await Promise.all([
+  const [{ t, locale }, hosts, others, cfg, site, sessions] = await Promise.all([
     getT(),
     getPeople("senior"),
     getFormsFor("guest"),
     getSiteConfig(),
     getSiteOrigin(),
+    getSessionsFor(key),
   ]);
 
   const title = pick(locale, form.title, form.title_en);
@@ -68,9 +73,14 @@ export default async function ClassDetailPage({
   const detail = pick(locale, form.detail, form.detail_en);
 
   const poster = posterUrl(form.poster_path);
-  const available = isFormAvailable(form);
+  const cutoff = form.cutoff_hours ?? 0;
+  const openCount = openSessionCount(sessions, cutoff);
+  // native는 열린 회차가 있느냐로, external은 구글폼이 열려 있느냐로 판정한다(§13.2).
+  const available = isBookableForm(form, openCount);
+  const native = isNative(form);
   // ★ 이 페이지의 신청 버튼은 이 클래스의 폼으로만 간다.
-  const href = goHref(form.key, "class");
+  // native면 사이트 안에 머물고, external이면 계측을 거쳐 구글폼으로 나간다.
+  const href = native ? `/book/${form.key}` : goHref(form.key, "class");
   const siblings = others.filter((f) => f.key !== form.key);
 
   return (
@@ -108,6 +118,10 @@ export default async function ClassDetailPage({
                 </a>
               )}
 
+              {/* 소요시간·언어·정원·참가비·포함사항·만나는 곳.
+                  0018 적용 전에는 값이 없어 통째로 렌더되지 않는다. */}
+              <ExperienceMeta form={form} locale={locale} />
+
               {detail && (
                 <div className="prose cdetail-body">
                   <ReactMarkdown
@@ -117,6 +131,22 @@ export default async function ClassDetailPage({
                     {detail}
                   </ReactMarkdown>
                 </div>
+              )}
+
+              {/* 회차 목록은 자체 예약을 쓰는 체험에만 있다.
+                  구글폼 체험은 날짜가 폼 안에 있으므로 여기 두면 두 벌이 된다. */}
+              {native && sessions.length > 0 && (
+                <section className="mt-10">
+                  <h2 className="mb-4 text-[1.25rem] font-extrabold">
+                    {t("book.pickSession")}
+                  </h2>
+                  <SessionPicker
+                    formKey={form.key}
+                    sessions={sessions}
+                    cutoffHours={cutoff}
+                    locale={locale}
+                  />
+                </section>
               )}
             </div>
 
@@ -128,15 +158,30 @@ export default async function ClassDetailPage({
 
                 {available ? (
                   <>
-                    <a
-                      className="btn btn-primary cbox-cta"
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {ctaLabel}
-                      <span className="sr-only">{t("common.newWindow")}</span>
-                    </a>
+                    {/* native는 사이트 안에서 이어진다 — 새 창으로 띄우면
+                        시니어가 돌아올 길을 잃는다. external만 새 창이다. */}
+                    {native ? (
+                      <Link className="btn btn-primary cbox-cta" href={href}>
+                        {ctaLabel}
+                      </Link>
+                    ) : (
+                      <a
+                        className="btn btn-primary cbox-cta"
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {ctaLabel}
+                        <span className="sr-only">{t("common.newWindow")}</span>
+                      </a>
+                    )}
+                    {native && openCount > 0 && (
+                      <p className="cbox-note">
+                        {locale === "en"
+                          ? `${openCount} dates open`
+                          : `예약 가능한 회차 ${openCount}개`}
+                      </p>
+                    )}
                     <div className="cbox-qr">
                       {/* eslint-disable-next-line @next/next/no-img-element -- 서버 생성 SVG */}
                       <img

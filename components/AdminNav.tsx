@@ -2,6 +2,7 @@ import Link from "next/link";
 
 const ITEMS: { href: string; label: string }[] = [
   { href: "/admin", label: "공지" },
+  { href: "/admin/bookings", label: "예약" },
   { href: "/admin/settings", label: "신청 폼 설정" },
   { href: "/admin/popups", label: "팝업" },
   { href: "/admin/people", label: "사람 소개" },

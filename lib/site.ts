@@ -10,9 +10,14 @@ export type SiteConfig = {
   contact_phone: string | null;
 };
 
-/** DB를 못 읽어도 페이지는 떠야 한다. */
+/**
+ * DB를 못 읽어도 페이지는 떠야 한다.
+ *
+ * 이 주소는 문의·신청 접수·개인정보 열람청구 세 곳에 같이 쓰인다.
+ * 바꿀 때는 DB의 site_config.contact_email도 같이 고친다 — 여기는 폴백일 뿐이다.
+ */
 export const FALLBACK_CONFIG: SiteConfig = {
   contact_email:
-    process.env.NEXT_PUBLIC_APPLICATION_EMAIL || "songchaewoo0@gmail.com",
+    process.env.NEXT_PUBLIC_APPLICATION_EMAIL || "beomsu9665@gachon.ac.kr",
   contact_phone: null,
 };

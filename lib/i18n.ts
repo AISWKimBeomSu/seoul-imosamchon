@@ -359,6 +359,104 @@ const DICT: Dict = {
     en: "Read the privacy policy ›",
   },
 
+  // ── 이용약관 ──────────────────────────────────────────
+  // 본문은 lib/terms.ts. 방침과 같은 구조다.
+  "terms.eyebrow": { ko: "약관", en: "Terms" },
+  "terms.title": { ko: "이용약관", en: "Terms of service" },
+  "terms.lead": {
+    ko: "체험을 예약하고 참가하실 때의 조건입니다. 취소·환불 규정도 여기 있습니다.",
+    en: "The conditions for booking and joining an experience, including cancellations and refunds.",
+  },
+  "terms.effective": { ko: "시행일", en: "In effect from" },
+  "terms.toc": { ko: "이 문서의 차례", en: "On this page" },
+  "terms.short": { ko: "이용약관", en: "Terms" },
+
+  // ── 예약 ──────────────────────────────────────────────
+  "book.eyebrow": { ko: "예약", en: "Booking" },
+  "book.pickSession": { ko: "언제 오시겠어요?", en: "Which date works for you?" },
+  "book.selected": { ko: "고르신 회차", en: "Your session" },
+  "book.changeSession": { ko: "다른 회차 고르기", en: "Choose another date" },
+  "book.yourDetails": { ko: "연락받으실 곳", en: "How we reach you" },
+  "book.name": { ko: "성함", en: "Your name" },
+  "book.email": { ko: "이메일", en: "Email" },
+  "book.emailHelp": {
+    ko: "확정 안내와 취소 링크를 이 주소로 보내드립니다.",
+    en: "We send your confirmation and cancellation link here.",
+  },
+  "book.phone": { ko: "전화번호", en: "Phone" },
+  "book.phoneHelp": {
+    ko: "당일 급한 일이 있을 때만 씁니다.",
+    en: "Only used if something urgent comes up on the day. International numbers are fine (+34…).",
+  },
+  "book.note": { ko: "미리 알려주실 것", en: "Anything we should know" },
+  "book.noteHelp": {
+    ko: "알레르기, 거동이 불편한 점, 도움이 필요한 부분을 적어 주세요.",
+    en: "Allergies, mobility needs, or anything you'd like help with.",
+  },
+  "book.consent": {
+    ko: "개인정보 수집·이용에 동의합니다 (필수)",
+    en: "I agree to the collection and use of my personal data (required)",
+  },
+  "book.consentDetail": {
+    ko: "성함·이메일·전화번호·인원을 예약 처리와 안내 목적으로 받고, 체험 후 6개월이 지나면 지웁니다.",
+    en: "We collect your name, email, phone and party size to handle the booking, and delete them 6 months after the experience.",
+  },
+  "book.age": { ko: "만 14세 이상입니다 (필수)", en: "I am 14 or older (required)" },
+  "book.submit": { ko: "예약 신청하기", en: "Request booking" },
+  "book.submitting": { ko: "보내는 중…", en: "Sending…" },
+  "book.noEmail": {
+    ko: "이메일이 없으신가요? 전화 주시면 저희가 대신 접수해 드립니다.",
+    en: "No email address? Call us and we'll book it for you.",
+  },
+  "book.notOpen": {
+    ko: "지금은 이 체험을 예약받고 있지 않습니다.",
+    en: "This experience is not taking bookings right now.",
+  },
+  "book.doneTitle": { ko: "신청이 접수되었습니다", en: "We've got your request" },
+  "book.doneLead": {
+    ko: "아직 확정은 아닙니다. 24시간 안에 확인해서 안내드릴게요.",
+    en: "This is not a confirmation yet — we'll check and get back to you within 24 hours.",
+  },
+  "book.doneCapture": {
+    ko: "이 화면을 캡처해 두시면 좋습니다. 같은 내용을 이메일로도 보내드렸습니다.",
+    en: "It's worth taking a screenshot. We've emailed you the same details.",
+  },
+  "book.manageLink": { ko: "예약 확인·취소하기", en: "View or cancel this booking" },
+
+  // ── 예약 조회·취소 ────────────────────────────────────
+  "booking.title": { ko: "예약 확인", en: "Your booking" },
+  "booking.notFound": { ko: "예약을 찾지 못했습니다", en: "We couldn't find that booking" },
+  "booking.notFoundHelp": {
+    ko: "링크가 잘못되었거나 이미 지난 예약일 수 있습니다. 링크를 잃으셨다면 연락 주세요. 저희가 찾아드립니다.",
+    en: "The link may be wrong or the booking may have passed. If you've lost your link, get in touch and we'll find it for you.",
+  },
+  "booking.cancel": { ko: "예약 취소하기", en: "Cancel this booking" },
+  "booking.cancelConfirm": {
+    ko: "정말 취소하시겠어요?",
+    en: "Are you sure you want to cancel?",
+  },
+  "booking.cancelConfirmHelp": {
+    ko: "취소하면 자리가 다시 열립니다. 되돌리려면 새로 신청하셔야 합니다.",
+    en: "Cancelling releases your place. To come back you'd need to book again.",
+  },
+  "booking.cancelYes": { ko: "네, 취소합니다", en: "Yes, cancel it" },
+  "booking.cancelNo": { ko: "아니요, 그대로 둘게요", en: "No, keep my booking" },
+  "booking.cancelled": { ko: "취소되었습니다", en: "Your booking is cancelled" },
+  "booking.cancelFailed": {
+    ko: "취소하지 못했습니다. 시작 시각이 지났거나 이미 처리된 예약입니다. 전화 주시면 도와드리겠습니다.",
+    en: "We couldn't cancel it — the start time may have passed, or it's already been handled. Please call us.",
+  },
+
+  // ── 회차·체험 메타 ────────────────────────────────────
+  "session.seatsLeft": { ko: "자리 남음", en: "places left" },
+  "session.available": { ko: "예약 가능", en: "Places available" },
+  "session.closed": { ko: "마감", en: "Closed" },
+  "session.none": {
+    ko: "지금은 열린 회차가 없습니다. 곧 다시 열립니다.",
+    en: "No dates are open at the moment. Please check back soon.",
+  },
+  "session.next": { ko: "다음 회차", en: "Next date" },
+
   // ── 푸터 ──────────────────────────────────────────────
   "foot.motto": {
     ko: "부엌은 빌려도, 60년을 살아야 얻어지는 손맛과 이야기는 빌릴 수 없습니다. 시니어의 세월을 정당한 일자리로 잇습니다.",

@@ -13,7 +13,9 @@ const STATIC: { path: string; priority: number; freq: MetadataRoute.Sitemap[numb
   { path: "/faq", priority: 0.6, freq: "monthly" },
   { path: "/apply", priority: 0.9, freq: "weekly" },
   { path: "/privacy", priority: 0.3, freq: "yearly" },
+  { path: "/terms", priority: 0.3, freq: "yearly" },
 ];
+// /book·/booking은 넣지 않는다 — 예약 플로우와 개인 예약 조회는 색인 대상이 아니다.
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();

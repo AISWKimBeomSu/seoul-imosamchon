@@ -32,7 +32,28 @@ export type ApplyForm = {
   closed_note_en: string;
   detail: string;      // 상세 페이지 본문 (마크다운)
   detail_en: string;
+
+  // ── v2.0 구조화 메타 (0018_experience_meta.sql) ──────────────────────────
+  // ⚠ 전부 옵셔널이다. 마이그레이션을 적용하기 전에는 이 컬럼들이 DB에 없고,
+  //    FORM_PUBLIC_COLS에도 아직 넣지 않았으므로 값이 undefined로 온다.
+  //    화면은 값이 없으면 그 부분을 숨기게 되어 있어(ExperienceMeta) 안전하다.
+  //    마이그레이션 적용 후 FORM_PUBLIC_COLS에 컬럼을 추가하면 한꺼번에 켜진다.
+  //    순서를 뒤집으면(코드 먼저) getForms의 select가 통째로 실패해 사이트의
+  //    모든 체험이 사라진다 — docs/PLATFORM.md §11.1의 경고.
+  duration_min?: number | null;
+  price_krw?: number | null;
+  max_guests?: number | null;
+  language?: string;
+  meet_place?: string;
+  meet_place_en?: string;
+  includes?: string[];
+  includes_en?: string[];
+  booking_mode?: BookingMode;
+  cutoff_hours?: number;
 };
+
+/** external=구글폼(/api/go 경유), native=자체 예약(/book/[key]) */
+export type BookingMode = "external" | "native";
 
 export type AdminForm = ApplyForm & {
   is_published: boolean;
@@ -54,9 +75,56 @@ export function isValidFormUrl(url: string): boolean {
 /** 키 형식 — forms.key CHECK와 동일 */
 export const FORM_KEY_PATTERN = /^[a-z][a-z0-9-]{1,30}$/;
 
-/** 지금 이 폼으로 실제 이동할 수 있는가 */
+/**
+ * 지금 이 폼으로 실제 이동할 수 있는가.
+ *
+ * ⚠ external(구글폼) 전용 판정이다. native 폼은 url이 null이라 여기서 항상
+ *   false가 나온다 — 자체 예약 체험을 이 함수로 판정하면 통째로 '준비 중'이
+ *   된다. 모드를 아우르는 판정은 isBookableForm()을 쓸 것.
+ */
 export function isFormAvailable(form: Pick<ApplyForm, "is_open" | "url">) {
   return Boolean(form.is_open && form.url);
+}
+
+/** 이 체험이 자체 예약을 쓰는가 (컬럼이 아직 없으면 external로 본다) */
+export function isNative(form: Pick<ApplyForm, "booking_mode">): boolean {
+  return form.booking_mode === "native";
+}
+
+/**
+ * 모드를 아우르는 가용성 판정. 상세·목록·홈·admin·팝업 다섯 곳이 이걸 공유한다.
+ *
+ * external — 구글폼이 열려 있는가 (기존 규칙 그대로)
+ * native   — 예약 가능한 회차가 하나라도 있는가. is_open·url은 보지 않는다.
+ *            자체 예약에서 '열림'은 사람이 켜는 스위치가 아니라 회차의 존재다.
+ *
+ * 참조: docs/PLATFORM.md §13.2 분기표
+ */
+export function isBookableForm(
+  form: Pick<ApplyForm, "is_open" | "url" | "booking_mode">,
+  openSessionCount = 0,
+): boolean {
+  return isNative(form) ? openSessionCount > 0 : isFormAvailable(form);
+}
+
+/**
+ * 신청 버튼이 향할 곳.
+ * native는 사이트 안에 머물고, external은 계측 리다이렉트를 거쳐 구글폼으로 나간다.
+ * 호출부는 external일 때만 target="_blank"를 붙인다.
+ */
+export function bookHref(form: Pick<ApplyForm, "key" | "booking_mode">): string | null {
+  return isNative(form) ? `/book/${form.key}` : null;
+}
+
+/**
+ * 잔여석 배지를 보여도 되는가.
+ *
+ * external 체험에서는 보여주면 안 된다. 구글폼·종이·전화로 들어온 신청이
+ * booked_count에 없으므로 '3자리 남음'이 사실이 아니다. 틀린 숫자를 보여주느니
+ * 아무 숫자도 안 보여주는 편이 낫다.
+ */
+export function showsSeatCount(form: Pick<ApplyForm, "booking_mode">): boolean {
+  return isNative(form);
 }
 
 /**
