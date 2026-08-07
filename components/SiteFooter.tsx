@@ -57,6 +57,12 @@ export default async function SiteFooter() {
           >
             {t("privacy.short")}
           </Link>
+          <Link
+            href="/terms"
+            className="text-[0.95rem] font-bold text-point underline"
+          >
+            {t("terms.short")}
+          </Link>
           {/* 숨긴 기록이 있을 때만 나타난다 */}
           <PopupResetLink label={t("foot.showPopup")} />
         </div>
