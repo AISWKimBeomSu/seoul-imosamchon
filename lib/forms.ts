@@ -59,8 +59,18 @@ export type AdminForm = ApplyForm & {
   is_published: boolean;
 };
 
+/**
+ * ⚠ 이 목록은 마이그레이션과 배포 순서가 얽혀 있다.
+ *
+ * getForms()가 이 문자열로 select 하므로, DB에 없는 컬럼이 여기 있으면
+ * 쿼리가 통째로 실패하고 빈 배열로 떨어진다 — 사이트의 모든 체험이 조용히
+ * 사라진다. 컬럼을 추가할 때는 **마이그레이션을 먼저 적용하고** 나서 이 줄을
+ * 고친다. (docs/PLATFORM.md §11.1)
+ *
+ * v2.0 구조화 메타는 0018_experience_meta.sql 적용 후 열었다.
+ */
 export const FORM_PUBLIC_COLS =
-  "id, key, title, subtitle, description, url, is_open, cta_label, closed_note, audience, poster_path, poster_alt, accent, sort, title_en, subtitle_en, description_en, cta_label_en, closed_note_en, detail, detail_en";
+  "id, key, title, subtitle, description, url, is_open, cta_label, closed_note, audience, poster_path, poster_alt, accent, sort, title_en, subtitle_en, description_en, cta_label_en, closed_note_en, detail, detail_en, duration_min, price_krw, max_guests, language, meet_place, meet_place_en, includes, includes_en, booking_mode, cutoff_hours";
 
 export const FORM_ADMIN_COLS = `${FORM_PUBLIC_COLS}, is_published`;
 
