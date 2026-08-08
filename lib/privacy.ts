@@ -24,9 +24,15 @@ export type Block =
 export type Section = { id: string; title: Bi; blocks: Block[] };
 
 /** 시행일. 내용을 고치면 이 날짜도 같이 올린다. */
-export const POLICY_EFFECTIVE_DATE = "2026-08-03";
+export const POLICY_EFFECTIVE_DATE = "2026-08-08";
 
 export const POLICY_EFFECTIVE_LABEL: Bi = {
+  ko: "2026년 8월 8일",
+  en: "8 August 2026",
+};
+
+/** 직전 판. §11 변경 이력에 쓴다. */
+export const POLICY_PREVIOUS_LABEL: Bi = {
   ko: "2026년 8월 3일",
   en: "3 August 2026",
 };
@@ -117,10 +123,13 @@ export function buildPolicy(c: PolicyContacts): Section[] {
             [
               { ko: "체험 클래스 예약", en: "Class booking" },
               {
-                ko: "성명, 연락처, 이메일, 참여 인원, 희망 일자",
-                en: "Name, contact details, email, number of guests, preferred date",
+                ko: "성명, 연락처, 이메일, 참여 인원, 예약한 회차, 미리 알려주신 요청사항(알레르기 등)",
+                en: "Name, phone number, email, number of guests, the session you booked, and anything you tell us in advance (allergies and so on)",
               },
-              { ko: "Google Forms 신청", en: "A Google Form" },
+              {
+                ko: "이 사이트의 예약 화면. 전화로 신청하신 경우에는 저희가 대신 입력합니다. 체험에 따라 Google Forms를 쓰기도 합니다",
+                en: "The booking form on this site. If you book by phone we enter it for you. Some experiences still use a Google Form",
+              },
               {
                 ko: "체험이 끝난 뒤 6개월 이내 파기",
                 en: "Deleted within 6 months of the experience taking place",
@@ -219,12 +228,12 @@ export function buildPolicy(c: PolicyContacts): Section[] {
             [
               { ko: "Supabase Inc. (미국)", en: "Supabase Inc. (United States)" },
               {
-                ko: "호스트 소개 정보와 사진의 데이터베이스·파일 저장",
-                en: "Database and file storage for host profiles and photographs",
+                ko: "예약 정보(성명·연락처·이메일·인원·요청사항), 호스트 소개 정보와 사진의 데이터베이스·파일 저장",
+                en: "Database and file storage for bookings (name, phone, email, party size, requests) and for host profiles and photographs",
               },
               {
-                ko: "대한민국(서울 리전)",
-                en: "Republic of Korea (Seoul region)",
+                ko: "대한민국(서울 리전) — 국외 이전이 아닙니다",
+                en: "Republic of Korea (Seoul region) — not a transfer abroad",
               },
             ],
             [
@@ -256,8 +265,10 @@ export function buildPolicy(c: PolicyContacts): Section[] {
               en: "How long — the same periods as in section 2; when a contract ends we require prompt deletion",
             },
             {
-              ko: `거부 방법 — 국외 이전을 원하지 않으시면 ${c.officerEmail} 로 알려 주십시오. 다만 Google Forms를 거치지 않는 접수 방법을 따로 마련해 드려야 하므로, 신청 처리가 늦어질 수 있습니다.`,
-              en: `How to refuse — write to ${c.officerEmail}. We will arrange an alternative that does not use Google Forms, though this may delay processing.`,
+              // 이제 자체 예약 화면이 있으므로 '대안이 없다'는 전제가 사라졌다.
+              // 국외 이전을 원치 않으시면 실제로 피할 길이 있다는 걸 적는다.
+              ko: `거부 방법 — 국외 이전을 원하지 않으시면 ${c.officerEmail} 로 알려 주십시오. 체험 예약은 이 사이트의 예약 화면이나 전화로 접수해 드릴 수 있고, 그 경우 Google을 거치지 않습니다. 시니어 호스트 지원은 종이 신청서로 대신하실 수 있습니다.`,
+              en: `How to refuse — write to ${c.officerEmail}. Bookings can be taken on this site or over the phone, which does not involve Google at all. Host applications can be made on paper instead.`,
             },
           ],
         },
@@ -550,7 +561,39 @@ export function buildPolicy(c: PolicyContacts): Section[] {
             en: "This policy applies from the effective date shown at the top of this page. If we add or change anything, we will post what is changing and when, in our notices section, at least seven days beforehand.",
           },
         },
+        {
+          kind: "p",
+          text: {
+            ko: "다만 이미 하고 있는 처리를 사실대로 적기 위한 정정은 바로 반영합니다. 틀린 설명을 7일 더 두는 것보다 고치는 편이 낫기 때문입니다. 그런 정정은 아래 이력에 남깁니다.",
+            en: "One exception: when a change simply corrects a description to match what we already do, we apply it at once. Leaving an inaccurate statement up for another week helps no one. Such corrections are listed below.",
+          },
+        },
+        {
+          kind: "table",
+          head: [
+            { ko: "시행일", en: "Effective" },
+            { ko: "바뀐 내용", en: "What changed" },
+          ],
+          rows: [
+            [
+              { ko: pick("ko", POLICY_EFFECTIVE_LABEL), en: pick("en", POLICY_EFFECTIVE_LABEL) },
+              {
+                ko: "체험 예약을 이 사이트에서 직접 받기 시작하면서, 수집 방법(‘Google Forms’ → ‘이 사이트의 예약 화면’)과 수집 항목(예약 회차·요청사항 추가)을 실제와 맞췄습니다. Supabase 위탁 범위에 예약 정보 저장을 명시했고, 국외 이전 거부 시의 대안을 실제로 가능한 방법으로 고쳤습니다.",
+                en: "We began taking bookings directly on this site, so we corrected how data reaches us (‘a Google Form’ → ‘the booking form on this site’) and what we collect (the session booked, and any requests). We also stated that Supabase stores booking data, and updated how to opt out of transfers abroad now that a real alternative exists.",
+              },
+            ],
+            [
+              { ko: pick("ko", POLICY_PREVIOUS_LABEL), en: pick("en", POLICY_PREVIOUS_LABEL) },
+              { ko: "최초 시행", en: "First version" },
+            ],
+          ],
+        },
       ],
     },
   ];
+}
+
+/** 이력 표에서 Bi를 한쪽 언어로 꺼내는 작은 도구. */
+function pick(locale: "ko" | "en", bi: Bi): string {
+  return locale === "en" ? bi.en : bi.ko;
 }

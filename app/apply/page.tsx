@@ -2,6 +2,8 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import CopyEmail from "@/components/CopyEmail";
 import ApplyFormCard from "@/components/ApplyFormCard";
+import { getSessionsByForm } from "@/lib/sessions.server";
+import { openSessionCount } from "@/lib/sessions";
 import PrivacyNote from "@/components/PrivacyNote";
 import PopupMount from "@/components/PopupMount";
 import { getSiteConfig } from "@/lib/config";
@@ -24,12 +26,14 @@ export default async function ApplyPage({
 }: {
   searchParams: Promise<{ closed?: string }>;
 }) {
-  const [{ closed }, cfg, forms, { t, locale }] = await Promise.all([
-    searchParams,
-    getSiteConfig(),
-    getForms(),
-    getT(),
-  ]);
+  const [{ closed }, cfg, forms, { t, locale }, sessionsByForm] =
+    await Promise.all([
+      searchParams,
+      getSiteConfig(),
+      getForms(),
+      getT(),
+      getSessionsByForm(),
+    ]);
 
   // /api/go가 마감 상태에서 되돌려보낸 폼
   const closedForm = closed ? forms.find((f) => f.key === closed) : undefined;
@@ -63,7 +67,15 @@ export default async function ApplyPage({
           {forms.length > 0 ? (
             <div className="fcards">
               {forms.map((f) => (
-                <ApplyFormCard key={f.key} form={f} highlight={f.key === "senior"} />
+                <ApplyFormCard
+                    key={f.key}
+                    form={f}
+                    highlight={f.key === "senior"}
+                    openSessions={openSessionCount(
+                      sessionsByForm.get(f.key) ?? [],
+                      f.cutoff_hours ?? 0,
+                    )}
+                  />
               ))}
             </div>
           ) : (

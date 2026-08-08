@@ -1,8 +1,14 @@
 import Image from "next/image";
+import Link from "next/link";
 import { qrVersion } from "@/lib/qr";
 import { getSiteOrigin } from "@/lib/origin";
 import { goHref } from "@/lib/links";
-import { isFormAvailable, posterUrl, type ApplyForm } from "@/lib/forms";
+import {
+  isBookableForm,
+  isNative,
+  posterUrl,
+  type ApplyForm,
+} from "@/lib/forms";
 import { getT } from "@/lib/locale.server";
 import { pick } from "@/lib/i18n";
 import CopyLink from "@/components/CopyLink";
@@ -16,15 +22,20 @@ import CopyLink from "@/components/CopyLink";
 export default async function ApplyFormCard({
   form,
   highlight = false,
+  openSessions = 0,
 }: {
   form: ApplyForm;
   highlight?: boolean;
+  /** 자체 예약 체험의 예약 가능한 회차 수. external이면 쓰이지 않는다. */
+  openSessions?: number;
 }) {
   const [{ t, locale }, site] = await Promise.all([getT(), getSiteOrigin()]);
 
-  const available = isFormAvailable(form);
+  // native는 열린 회차가 있느냐로, external은 구글폼이 열려 있느냐로 판정한다(§13.2).
+  const native = isNative(form);
+  const available = isBookableForm(form, openSessions);
   const poster = posterUrl(form.poster_path);
-  const href = goHref(form.key, "apply");
+  const href = native ? `/book/${form.key}` : goHref(form.key, "apply");
 
   const title = pick(locale, form.title, form.title_en);
   const subtitle = pick(locale, form.subtitle, form.subtitle_en);
@@ -56,15 +67,31 @@ export default async function ApplyFormCard({
 
         {available ? (
           <>
-            <a
-              className="btn btn-primary fcard-cta"
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {ctaLabel}
-              <span className="sr-only">{t("common.newWindow")}</span>
-            </a>
+            {/* native는 사이트 안에서 이어진다. 새 창으로 띄우면 시니어가
+                돌아올 길을 잃는다 — external만 새 창이다. */}
+            {native ? (
+              <Link className="btn btn-primary fcard-cta" href={href}>
+                {ctaLabel}
+              </Link>
+            ) : (
+              <a
+                className="btn btn-primary fcard-cta"
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {ctaLabel}
+                <span className="sr-only">{t("common.newWindow")}</span>
+              </a>
+            )}
+
+            {native && openSessions > 0 && (
+              <p className="fcard-eyebrow" style={{ marginTop: "0.6rem" }}>
+                {locale === "en"
+                  ? `${openSessions} dates open`
+                  : `예약 가능한 회차 ${openSessions}개`}
+              </p>
+            )}
 
             <div className="fcard-qr">
               {/* eslint-disable-next-line @next/next/no-img-element -- 서버 생성 SVG */}
