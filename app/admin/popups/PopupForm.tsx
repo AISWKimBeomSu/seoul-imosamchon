@@ -105,8 +105,8 @@ export default function PopupForm({
       setMsg({ type: "err", text: "제목을 입력해 주세요." });
       return;
     }
-    if (d.link_kind === "form" && !d.form_key) {
-      setMsg({ type: "err", text: "연결할 신청 폼을 선택해 주세요." });
+    if ((d.link_kind === "form" || d.link_kind === "class") && !d.form_key) {
+      setMsg({ type: "err", text: "연결할 체험을 선택해 주세요." });
       return;
     }
     if (d.link_kind === "notice" && !d.notice_id) {
@@ -157,7 +157,8 @@ export default function PopupForm({
         subtitle: d.subtitle.trim(),
         body: d.body.trim(),
         link_kind: d.link_kind,
-        form_key: d.link_kind === "form" ? d.form_key : null,
+        form_key:
+          d.link_kind === "form" || d.link_kind === "class" ? d.form_key : null,
         notice_id: d.link_kind === "notice" ? d.notice_id : null,
         cta_label: d.cta_label.trim() || "신청하러 가기",
         show_qr: d.show_qr,
@@ -345,15 +346,16 @@ export default function PopupForm({
           value={d.link_kind}
           onChange={(e) => set("link_kind", e.target.value as PopupLinkKind)}
         >
-          <option value="form">신청 폼</option>
+          <option value="form">신청 폼 (바로 신청)</option>
+          <option value="class">체험 상세 페이지 (읽고 나서 신청)</option>
           <option value="notice">특정 공지 페이지</option>
           <option value="none">링크 없음 (안내만)</option>
         </select>
       </div>
 
-      {d.link_kind === "form" && (
+      {(d.link_kind === "form" || d.link_kind === "class") && (
         <div className="field">
-          <label htmlFor="p-form">신청 폼 선택</label>
+          <label htmlFor="p-form">체험 선택</label>
           <select
             id="p-form"
             className="select"
@@ -368,7 +370,9 @@ export default function PopupForm({
             ))}
           </select>
           <span className="hint">
-            선택한 폼이 &lsquo;접수 중&rsquo;이 아니면 이 팝업은 자동으로 뜨지 않습니다.
+            {d.link_kind === "form"
+              ? "선택한 폼이 ‘접수 중’이 아니면 이 팝업은 자동으로 뜨지 않습니다."
+              : "상세 페이지로 보냅니다. 접수 중이 아니어도 팝업은 뜹니다 — 상세에서 마감을 안내합니다."}
           </span>
         </div>
       )}

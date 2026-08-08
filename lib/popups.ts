@@ -3,7 +3,13 @@
  * DB 조회는 lib/popups.server.ts.
  */
 
-export type PopupLinkKind = "form" | "notice" | "none";
+/**
+ * form  = 신청으로 직행 (/api/go 경유 — 자체 예약이면 예약 화면, 아니면 구글폼)
+ * class = 체험 상세 페이지로 (읽고 나서 고르게 한다)
+ * notice= 공지 상세
+ * none  = 링크 없음
+ */
+export type PopupLinkKind = "form" | "class" | "notice" | "none";
 export type PopupScope = "home" | "all";
 
 export type Popup = {

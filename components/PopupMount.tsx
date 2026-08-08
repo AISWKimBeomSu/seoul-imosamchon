@@ -42,6 +42,13 @@ export default async function PopupMount({
       href = goHref(form.key, "popup");
       external = true;
       if (p.show_qr) qrSrc = `/api/qr/${form.key}?v=${qrVersion(form.url)}`;
+    } else if (p.link_kind === "class" && p.form_key) {
+      // 신청으로 바로 보내지 않고 상세를 읽게 한다. 회차가 여럿이거나
+      // 참가비가 있는 체험은 무엇인지 알고 고르는 편이 취소가 적다.
+      const form = await getForm(p.form_key);
+      if (!form) continue;
+      href = `/about/${form.key}`;
+      if (p.show_qr) qrSrc = `/api/qr/${form.key}?v=${qrVersion(form.url)}`;
     } else if (p.link_kind === "notice") {
       if (!p.notice_id) continue;
       href = `/notice/${p.notice_id}`;
