@@ -2,7 +2,12 @@ import "server-only";
 
 import { headers } from "next/headers";
 
-const FALLBACK = "https://seoul-imosamchon.vercel.app";
+/**
+ * 헤더를 못 읽는 맥락에서만 쓰인다. 실제 서비스 주소여야 한다 —
+ * 여기 적힌 주소가 QR이나 메일 링크로 나갈 수 있기 때문이다.
+ * (2026-08-09 자체 도메인 연결)
+ */
+const FALLBACK = "https://seoulimosamchon.com";
 
 /**
  * 지금 요청이 들어온 실제 주소.

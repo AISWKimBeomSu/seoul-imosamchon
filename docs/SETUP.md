@@ -8,7 +8,8 @@
 | 항목 | 값 |
 |---|---|
 | 레포 | https://github.com/AISWKimBeomSu/seoul-imosamchon |
-| 배포 | https://seoul-imosamchon-orcin.vercel.app (push하면 자동 배포) |
+| 배포 | **https://seoulimosamchon.com** (2026-08-09 자체 도메인 연결) · push하면 자동 배포 |
+| 도메인 | 가비아 등록 · A `@`→76.76.21.21, CNAME `www`→cname.vercel-dns.com. · **자동갱신 확인 필요** |
 | **새 DB** | Supabase `seoul-imosamchon-v2` · `zurjjkznmdqxtzqbzejp` · 서울 리전 |
 | 구 DB | `pxfmvncfdfiuxobjzihw` — 친구 팀 사이트가 계속 쓴다. **건드리지 않는다** |
 | 마이그레이션 | 0000~0022 전부 적용 완료 |
@@ -48,7 +49,7 @@
    values ('the.0ne021111@gmail.com', '김범수')
    on conflict (email) do nothing;
    ```
-5. https://seoul-imosamchon-orcin.vercel.app/admin/login 에서 로그인 확인
+5. https://seoulimosamchon.com/admin/login 에서 로그인 확인
 
 > 다른 이메일로 하고 싶으면 3·4번의 주소만 바꾸면 된다.
 > 송채우님도 계속 관리자로 두려면 같은 방식으로 한 줄 더 넣으면 된다.
@@ -61,7 +62,7 @@
 SUPABASE_SERVICE_ROLE_KEY='복사한키' node scripts/copy-storage.mjs
 ```
 
-두 번 돌려도 안전하다. 끝나면 https://seoul-imosamchon-orcin.vercel.app/notice 에서 포스터가 보이는지 확인.
+두 번 돌려도 안전하다. 끝나면 https://seoulimosamchon.com/notice 에서 포스터가 보이는지 확인.
 
 ---
 

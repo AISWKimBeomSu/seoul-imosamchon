@@ -47,6 +47,28 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: SECURITY_HEADERS }];
   },
+
+  /**
+   * www 를 루트 도메인으로 모은다.
+   *
+   * 두 주소가 같은 내용을 그대로 서비스하면 검색엔진이 별개 사이트로 보고
+   * 평가가 갈린다. 더 실질적인 문제는 lib/origin.ts가 요청 호스트에서 주소를
+   * 유도한다는 점이다 — www로 들어온 손님에게는 QR과 예약 취소 링크가 전부
+   * www 주소로 나간다. 한 가지 주소만 돌아다니게 여기서 정리한다.
+   *
+   * 308(영구)인 이유: 브라우저와 검색엔진이 캐시해 다음부터는 요청 자체가
+   * 루트로 간다. 도메인을 바꿀 일이 생기면 그때 이 규칙을 지운다.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.seoulimosamchon.com" }],
+        destination: "https://seoulimosamchon.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
