@@ -74,7 +74,7 @@
 |---|---|---|
 | D1~D3 (v1.1) | 마이그레이션·스토리지 정책 → 해소됨 | — |
 | D4 (v1.1) | 계측 — `SUPABASE_SERVICE_ROLE_KEY` 미설정으로 `link_clicks` **0건** | §16 DB 분리와 함께 신규 키 설정으로 해소 |
-| D5 | `events`·`faqs` 미사용 | v2.0 범위 밖 유지(§9) |
+| D5 | `events`·`faqs` 미사용 | **`faqs` 해소** (0025 — FAQ를 DB로, `/admin/faqs` 신설). `events`는 여전히 미사용 |
 | D6 | 전 페이지 force-dynamic | 유지(ADR-6). 캐싱 전환은 Phase X 독립 릴리스 |
 | **D7** | 레거시 CSS 507→582줄 역행 | **v2.0 신규 화면은 Tailwind+shadcn만**(ADR-12). 레거시 블록 신규 추가 금지 |
 | **D8** | CSP/보안 헤더 미적용 | **Phase 0 적용** (예약 PII 저장 전) |
@@ -790,7 +790,7 @@ forms 메타+시드 · sessions·form_hosts · 상세 재조립 · `/people/[slu
 ### C.0.1 현재 운영 상태
 
 - **DB**: 신규 Supabase `zurjjkznmdqxtzqbzejp` (팀 조직). 구 프로젝트는 친구 팀 사이트가 계속 사용 — 조회만 했고 변경 없음
-- **하이브리드 운영 중**: cooking = 자체 예약(회차 3개), hiking·senior = 구글폼. 두 방식이 같은 사이트에서 공존하는 것을 실측 확인
+- **하이브리드 운영 중**: cooking·hiking = 자체 예약(회차 5개), senior = 구글폼. 두 방식이 같은 사이트에서 공존하는 것을 실측 확인. 시니어 모집은 체험이 아니라 공고라 회차·정원 개념이 없고 지원서 문항이 길어 구글폼이 여전히 맞다
 - **미설정**: `RESEND_API_KEY`(도메인 U3 선행) → 메일 발송만 꺼져 있고 예약은 정상. `/admin`에 배너로 표시
 
 ### C.0.2 이전 초안(draft.2) 대비 실제 구현에서 드러난 것

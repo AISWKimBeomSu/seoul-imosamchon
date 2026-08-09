@@ -215,6 +215,10 @@ const DICT: Dict = {
   // ── FAQ ───────────────────────────────────────────────
   "faq.eyebrow": { ko: "자주 묻는 질문", en: "Frequently asked" },
   "faq.title": { ko: "궁금한 점을 모았어요", en: "Questions we get a lot" },
+  "faq.empty": {
+    ko: "아직 등록된 질문이 없습니다. 궁금한 점은 언제든 연락 주세요.",
+    en: "No questions yet. Please get in touch any time.",
+  },
   "faq.ctaTitle": { ko: "궁금증이 풀리셨나요?", en: "Still have a question?" },
   "faq.ctaSub": {
     ko: "더 궁금한 점은 신청 후에도 전화·이메일로 도와드립니다.",

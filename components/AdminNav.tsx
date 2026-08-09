@@ -1,11 +1,15 @@
 import Link from "next/link";
 
+// 순서는 운영자가 자주 여는 순이다. 예약이 제일 앞에 오는 이유 —
+// 미처리 신청은 24시간 안에 답해야 하고, 나머지는 급하지 않다.
 const ITEMS: { href: string; label: string }[] = [
-  { href: "/admin", label: "공지" },
   { href: "/admin/bookings", label: "예약" },
-  { href: "/admin/settings", label: "신청 폼 설정" },
-  { href: "/admin/popups", label: "팝업" },
+  { href: "/admin/experiences", label: "체험·회차" },
+  { href: "/admin", label: "공지" },
   { href: "/admin/people", label: "사람 소개" },
+  { href: "/admin/faqs", label: "FAQ" },
+  { href: "/admin/popups", label: "팝업" },
+  { href: "/admin/settings", label: "연락처·QR" },
 ];
 
 export default function AdminNav({ current }: { current: string }) {
