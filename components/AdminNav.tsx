@@ -10,6 +10,7 @@ const ITEMS: { href: string; label: string }[] = [
   { href: "/admin/faqs", label: "FAQ" },
   { href: "/admin/popups", label: "팝업" },
   { href: "/admin/settings", label: "연락처·QR" },
+  { href: "/admin/mail-preview", label: "메일 미리보기" },
 ];
 
 export default function AdminNav({ current }: { current: string }) {
