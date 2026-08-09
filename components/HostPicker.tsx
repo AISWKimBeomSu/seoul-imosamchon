@@ -2,8 +2,9 @@
 
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import { ACTION_INIT } from "@/lib/action-state";
 import { Button } from "@/components/ui/button";
-import { ADMIN_INIT, setHosts } from "@/app/admin/experiences/actions";
+import { setHosts } from "@/app/admin/experiences/actions";
 import type { AdminPerson } from "@/lib/people";
 
 /**
@@ -30,7 +31,7 @@ export default function HostPicker({
   people: AdminPerson[];
   selected: string[];
 }) {
-  const [state, action] = useActionState(setHosts, ADMIN_INIT);
+  const [state, action] = useActionState(setHosts, ACTION_INIT);
 
   return (
     <section className="mt-8">

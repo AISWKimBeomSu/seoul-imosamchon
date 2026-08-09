@@ -2,10 +2,11 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { ACTION_INIT } from "@/lib/action-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ADMIN_INIT, updateExperience } from "@/app/admin/experiences/actions";
+import { updateExperience } from "@/app/admin/experiences/actions";
 import type { AdminForm } from "@/lib/forms";
 
 /**
@@ -82,7 +83,7 @@ function SaveBar({ note, ok }: { note: string; ok: boolean }) {
 }
 
 export default function ExperienceForm({ form }: { form: AdminForm }) {
-  const [state, action] = useActionState(updateExperience, ADMIN_INIT);
+  const [state, action] = useActionState(updateExperience, ACTION_INIT);
   const [mode, setMode] = useState(form.booking_mode ?? "external");
 
   const native = mode === "native";

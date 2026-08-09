@@ -1,13 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { type ActionState } from "@/lib/action-state";
+
 import { isAdminRequest } from "@/lib/admin-guard.server";
 import { createServiceClient } from "@/lib/supabase/service";
 
-export type FaqState = { ok: boolean; message: string };
-export const FAQ_INIT: FaqState = { ok: false, message: "" };
 
-const DENIED: FaqState = { ok: false, message: "권한이 없습니다." };
+const DENIED: ActionState = { ok: false, message: "권한이 없습니다." };
 
 function payload(formData: FormData) {
   return {
@@ -23,9 +23,9 @@ function payload(formData: FormData) {
 
 /** 문항 추가 */
 export async function createFaq(
-  _prev: FaqState,
+  _prev: ActionState,
   formData: FormData,
-): Promise<FaqState> {
+): Promise<ActionState> {
   if (!(await isAdminRequest())) return DENIED;
 
   const d = payload(formData);
@@ -45,9 +45,9 @@ export async function createFaq(
 
 /** 문항 수정 · 삭제 */
 export async function updateFaq(
-  _prev: FaqState,
+  _prev: ActionState,
   formData: FormData,
-): Promise<FaqState> {
+): Promise<ActionState> {
   if (!(await isAdminRequest())) return DENIED;
 
   const id = String(formData.get("id") ?? "");

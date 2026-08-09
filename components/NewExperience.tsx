@@ -2,10 +2,11 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { ACTION_INIT } from "@/lib/action-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ADMIN_INIT, createExperience } from "@/app/admin/experiences/actions";
+import { createExperience } from "@/app/admin/experiences/actions";
 
 /**
  * 새 체험 만들기.
@@ -23,7 +24,7 @@ function Submit() {
 }
 
 export default function NewExperience() {
-  const [state, action] = useActionState(createExperience, ADMIN_INIT);
+  const [state, action] = useActionState(createExperience, ACTION_INIT);
   const [open, setOpen] = useState(false);
 
   if (!open) {

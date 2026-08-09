@@ -2,12 +2,12 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { ACTION_INIT } from "@/lib/action-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  ADMIN_INIT,
-  createSession,
+    createSession,
   updateSession,
 } from "@/app/admin/experiences/actions";
 import {
@@ -58,8 +58,8 @@ export default function SessionManager({
   cutoffHours: number;
   defaultCapacity: number | null;
 }) {
-  const [createState, createAction] = useActionState(createSession, ADMIN_INIT);
-  const [rowState, rowAction] = useActionState(updateSession, ADMIN_INIT);
+  const [createState, createAction] = useActionState(createSession, ACTION_INIT);
+  const [rowState, rowAction] = useActionState(updateSession, ACTION_INIT);
   const [adding, setAdding] = useState(false);
   const [editingCapacity, setEditingCapacity] = useState<string | null>(null);
 

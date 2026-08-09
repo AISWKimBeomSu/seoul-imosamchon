@@ -2,10 +2,11 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { ACTION_INIT } from "@/lib/action-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FAQ_INIT, createFaq, updateFaq } from "@/app/admin/faqs/actions";
+import { createFaq, updateFaq } from "@/app/admin/faqs/actions";
 import { AUDIENCE_LABEL, type AdminFaq, type FaqAudience } from "@/lib/faqs";
 
 /**
@@ -122,7 +123,7 @@ function Fields({ faq }: { faq?: AdminFaq }) {
 }
 
 function Row({ faq }: { faq: AdminFaq }) {
-  const [state, action] = useActionState(updateFaq, FAQ_INIT);
+  const [state, action] = useActionState(updateFaq, ACTION_INIT);
   const [editing, setEditing] = useState(false);
 
   if (editing) {
@@ -184,7 +185,7 @@ function Row({ faq }: { faq: AdminFaq }) {
 }
 
 export default function FaqEditor({ faqs }: { faqs: AdminFaq[] }) {
-  const [state, action] = useActionState(createFaq, FAQ_INIT);
+  const [state, action] = useActionState(createFaq, ACTION_INIT);
   const [adding, setAdding] = useState(false);
 
   const guest = faqs.filter((f) => f.audience === "guest");

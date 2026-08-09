@@ -2,10 +2,10 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { ACTION_INIT } from "@/lib/action-state";
 import { Button } from "@/components/ui/button";
 import {
-  ADMIN_EMPTY,
-  resendManageLink,
+    resendManageLink,
   updateBookingStatus,
 } from "@/app/admin/bookings/actions";
 import type { BookingStatus } from "@/lib/bookings";
@@ -49,8 +49,8 @@ export default function BookingActions({
   hasEmail: boolean;
 }) {
   // 상태 변경은 어느 버튼을 눌렀든 결과가 한 곳에 모여야 한다.
-  const [state, statusAction] = useActionState(updateBookingStatus, ADMIN_EMPTY);
-  const [resendState, resendAction] = useActionState(resendManageLink, ADMIN_EMPTY);
+  const [state, statusAction] = useActionState(updateBookingStatus, ACTION_INIT);
+  const [resendState, resendAction] = useActionState(resendManageLink, ACTION_INIT);
   const [declining, setDeclining] = useState(false);
 
   const note = state.message || resendState.message;

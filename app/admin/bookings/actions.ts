@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { type ActionState } from "@/lib/action-state";
+
 import { isAdminRequest } from "@/lib/admin-guard.server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { newCancelToken } from "@/lib/token.server";
@@ -21,9 +23,7 @@ import {
   type BookingMailData,
 } from "@/lib/email.server";
 
-export type AdminActionState = { ok: boolean; message: string };
 
-export const ADMIN_EMPTY: AdminActionState = { ok: false, message: "" };
 
 const ALLOWED: BookingStatus[] = [
   "confirmed",
@@ -43,9 +43,9 @@ const ALLOWED: BookingStatus[] = [
  * 못 보낸 메일은 다시 보내면 된다(F13-4).
  */
 export async function updateBookingStatus(
-  _prev: AdminActionState,
+  _prev: ActionState,
   formData: FormData,
-): Promise<AdminActionState> {
+): Promise<ActionState> {
   if (!(await isAdminRequest())) {
     return { ok: false, message: "권한이 없습니다." };
   }
@@ -141,9 +141,9 @@ async function notifyGuest(
  * 면제된다(전화는 마감 직전에 올 수 있고, 그 판단은 사람이 한다).
  */
 export async function createManualBooking(
-  _prev: AdminActionState,
+  _prev: ActionState,
   formData: FormData,
-): Promise<AdminActionState> {
+): Promise<ActionState> {
   if (!(await isAdminRequest())) {
     return { ok: false, message: "권한이 없습니다." };
   }
@@ -209,9 +209,9 @@ export async function createManualBooking(
 
 /** 조회 링크를 잃은 게스트에게 다시 보낸다(F16-6). */
 export async function resendManageLink(
-  _prev: AdminActionState,
+  _prev: ActionState,
   formData: FormData,
-): Promise<AdminActionState> {
+): Promise<ActionState> {
   if (!(await isAdminRequest())) {
     return { ok: false, message: "권한이 없습니다." };
   }
@@ -240,9 +240,9 @@ export async function resendManageLink(
  * 화면에서 건수를 보여주고 사람이 누르게 한다.
  */
 export async function purgeBookings(
-  _prev: AdminActionState,
+  _prev: ActionState,
   _formData: FormData,
-): Promise<AdminActionState> {
+): Promise<ActionState> {
   if (!(await isAdminRequest())) {
     return { ok: false, message: "권한이 없습니다." };
   }

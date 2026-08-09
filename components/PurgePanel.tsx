@@ -2,8 +2,9 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { ACTION_INIT } from "@/lib/action-state";
 import { Button } from "@/components/ui/button";
-import { ADMIN_EMPTY, purgeBookings } from "@/app/admin/bookings/actions";
+import { purgeBookings } from "@/app/admin/bookings/actions";
 
 /**
  * 개인정보 파기 (F16-4).
@@ -29,7 +30,7 @@ export default function PurgePanel({
   count: number;
   oldest: string | null;
 }) {
-  const [state, action] = useActionState(purgeBookings, ADMIN_EMPTY);
+  const [state, action] = useActionState(purgeBookings, ACTION_INIT);
   const [asking, setAsking] = useState(false);
 
   if (state.message) {

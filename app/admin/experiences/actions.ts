@@ -1,25 +1,25 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { type ActionState } from "@/lib/action-state";
+
 import { isAdminRequest } from "@/lib/admin-guard.server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { deleteSession } from "@/lib/admin-experiences.server";
 import { FORM_KEY_PATTERN, FORM_URL_PATTERN } from "@/lib/forms";
 
-export type AdminState = { ok: boolean; message: string };
-export const ADMIN_INIT: AdminState = { ok: false, message: "" };
 
-const DENIED: AdminState = { ok: false, message: "권한이 없습니다." };
+const DENIED: ActionState = { ok: false, message: "권한이 없습니다." };
 
-function fail(message: string): AdminState {
+function fail(message: string): ActionState {
   return { ok: false, message };
 }
 
 /** 체험 생성. 지금까지 SQL로만 가능했던 것(부채 D9) */
 export async function createExperience(
-  _prev: AdminState,
+  _prev: ActionState,
   formData: FormData,
-): Promise<AdminState> {
+): Promise<ActionState> {
   if (!(await isAdminRequest())) return DENIED;
 
   const key = String(formData.get("key") ?? "").trim();
@@ -60,9 +60,9 @@ export async function createExperience(
 
 /** 체험 내용 수정 */
 export async function updateExperience(
-  _prev: AdminState,
+  _prev: ActionState,
   formData: FormData,
-): Promise<AdminState> {
+): Promise<ActionState> {
   if (!(await isAdminRequest())) return DENIED;
 
   const key = String(formData.get("key") ?? "");
@@ -147,9 +147,9 @@ export async function updateExperience(
 
 /** 회차 추가 */
 export async function createSession(
-  _prev: AdminState,
+  _prev: ActionState,
   formData: FormData,
-): Promise<AdminState> {
+): Promise<ActionState> {
   if (!(await isAdminRequest())) return DENIED;
 
   const formKey = String(formData.get("form_key") ?? "");
@@ -188,9 +188,9 @@ export async function createSession(
 
 /** 회차 마감 토글 · 정원 수정 · 삭제 */
 export async function updateSession(
-  _prev: AdminState,
+  _prev: ActionState,
   formData: FormData,
-): Promise<AdminState> {
+): Promise<ActionState> {
   if (!(await isAdminRequest())) return DENIED;
 
   const id = String(formData.get("id") ?? "");
@@ -240,9 +240,9 @@ export async function updateSession(
 
 /** 체험에 호스트 연결 */
 export async function setHosts(
-  _prev: AdminState,
+  _prev: ActionState,
   formData: FormData,
-): Promise<AdminState> {
+): Promise<ActionState> {
   if (!(await isAdminRequest())) return DENIED;
 
   const formKey = String(formData.get("form_key") ?? "");

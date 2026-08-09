@@ -2,10 +2,11 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { ACTION_INIT } from "@/lib/action-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ADMIN_EMPTY, createManualBooking } from "@/app/admin/bookings/actions";
+import { createManualBooking } from "@/app/admin/bookings/actions";
 import { formatSessionWhen, remainingSeats, type Session } from "@/lib/sessions";
 
 /**
@@ -26,7 +27,7 @@ function Submit() {
 export type SessionOption = Session & { formTitle: string };
 
 export default function ManualBooking({ sessions }: { sessions: SessionOption[] }) {
-  const [state, action] = useActionState(createManualBooking, ADMIN_EMPTY);
+  const [state, action] = useActionState(createManualBooking, ACTION_INIT);
   const [open, setOpen] = useState(false);
 
   if (!open) {
